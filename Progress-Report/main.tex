@@ -1,0 +1,351 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+\PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2021
+
+% ready for submission
+%\usepackage{neurips_2021}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2021}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+\usepackage[final]{neurips_2021}
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2021}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=purple]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{float}
+\input{~/Developer/Template/Academic/Math.tex}
+
+\usepackage{import}
+\usepackage{xifthen}
+\usepackage{pdfpages}
+\usepackage{transparent}
+\newcommand{\incfig}[1]{%
+	\def\svgwidth{\columnwidth}
+	\import{./Figures/}{#1.pdf_tex}
+}
+
+\title{EECS 545 Machine Learning\\Progress Report\\GNN on Traveling Salesman Problem}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  Pingbang Hu\\
+  Department of Computer Science\\
+  University of Michigan\\
+  \texttt{pbb@umich.edu} \\
+  \And
+  Jonathan Moore \\
+  Department of Computer Science\\
+  University of Michigan\\
+  \texttt{moorejon@umich.edu} \\
+  \And
+  Yi Zhou \\
+  Department of Math\\
+  University of Michigan\\
+  \texttt{yizho@umich.edu} \\
+  \And
+  Shubham Kumar Pandey \\
+  Department of Statistics\\
+  University of Michigan\\
+  \texttt{pandeysk@umich.edu} \\
+  \And
+  Anuraag Ramesh \\
+  Department of Statistics\\
+  University of Michigan\\
+  \texttt{anuraagr@umich.edu} \\
+}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+	%Yi Zhou
+
+	This is our progress report for the EECS 545 course project. Graph neural network is a rising concept in computer science that has demonstrated significant potential in many areas. Our project aims to
+	further demonstrate its potential by applying it to the classic traveling salesman problem. After generating the dataset, we will first use imitation learning to obtain a pretty good path, which will
+	then be inputted into reinforcement learning to obtain the optimal solution. Since imitation learning converges very fast, we expect our run time to be promising compared to tradition exact solutions.
+
+	In this progress report, we will describe and explain our proposed method, share important related works, show our difference with the existing works, present our experimental results, and set up weekly
+	goals for future development.
+
+	\paragraph{Keywords: }Travelling salesman problem, Graph Neural Network, Imitation Training, Reinforcement Learning, Transformer, Integer Programming, Embedding learning, Link Prediction, Combinatorial
+	Optimization, Learning theory.
+\end{abstract}
+
+
+\section{Introduction}
+%Yi Zhou
+
+The travelling salesman problem, also called the travelling salesperson problem or \texttt{TSP}, is a problem as follows. Given a list of cities and the distances between each pair of cities, we want
+to find the shortest possible route that visits each city \emph{exactly once} and returns to the origin city.
+
+Specifically, given an \textbf{undirected weighted graph} \(\mathcal{G} = (\mathcal{E}, \mathcal{V})\), which is an ordered pair of nodes set \(\mathcal{E}\) and edges set
+\(\mathcal{V}\subseteq \mathcal{E}\times\mathcal{E}\) where \(\mathcal{G}\) is equipped with \textbf{spatial structure}. This means that each edge between nodes will have different weights and each
+node will have its coordinates, we want to find a simple cycle that visits every node exactly once while having the smallest cost.
+
+Our approach is based on the application of graph neural networks. After generating the dataset, we will first use imitation learning to obtain a pretty good path, which will then be inputted into
+reinforcement learning to obtain the optimal solution. Since imitation learning converges very fast, we expect our run time to be promising compared to tradition exact solutions.
+
+\section{Proposed Method}
+\subsection{Problem Formulation}
+\subsubsection{TSP as Integer Linear Programming}
+We first formulate \texttt{TSP} in terms of \textbf{Integer Linear Programming}. Given an undirected weighted group \(\mathcal{G} = (\mathcal{E}, \mathcal{V})\), we label the
+nodes with numbers \(1, \ldots, n\) and define
+\[
+	x_{ij}\coloneqq \begin{dcases}
+		1, & \text{if }(i, j)\in \mathcal{E}^\prime                       \\
+		0, & \text{if } (i, j)\in \mathcal{E}\setminus\mathcal{E}^\prime,
+	\end{dcases}
+\]
+where \(\mathcal{E}^\prime\subset \mathcal{E}\) is a variable which can be viewed as a compact representation of all variables \(x_{ij}\), \(\forall i, j\). Furthermore, we
+denote the weight on edge \((i, j)\) by \(c_{ij}\), then for a particular \texttt{TSP} problem instance, we can formulate the problem as follows.
+\begin{equation}\label{formula:TSP}
+	\begin{aligned}
+		\min & \sum _{i=1}^{n}\sum _{j\neq i,j=1}^{n}c_{ij}x_{ij}\colon &  &                      \\
+		     & x_{ij}\in \{0,1\}                                        &  & i,j=1,\ldots ,n;     \\
+		     & u_{i}\in \mathbb{Z}                                      &  & i=2,\ldots ,n;       \\
+		     & \sum _{i=1,i\neq j}^{n}x_{ij}=1                          &  & j=1,\ldots ,n;       \\
+		     & \sum _{j=1,j\neq i}^{n}x_{ij}=1                          &  & i=1,\ldots ,n;       \\
+		     & u_{i}-u_{j}+nx_{ij}\leq n-1                              &  & 2\leq i\neq j\leq n; \\
+		     & 1\leq u_{i}\leq n-1                                      &  & 2\leq i\leq n.
+	\end{aligned}
+\end{equation}
+
+This is the Miller-Tucker-Zemlin formulation\cite{MTZ-formulation}. Note that in our case, since we're going to solve \texttt{TSP} exactly, hence all variables are integers,
+and we sometimes call this kind of integer linear programming as \textbf{pure integer programming}.
+
+Since integer programming is a NP-Hard problem, there are no known polynomial algorithm can solve this explicitly. Hence, modern approach to such a problem is to
+\textbf{relax} the integrality constraint, which makes \autoref{formula:TSP} becomes a continuous linear programming (LP), whose solution provides a lower bound to
+\autoref{formula:TSP} since it's a relaxation, and we're trying to find the minimum.
+
+Since an LP is a convex optimization problem, we have many polynomial time algorithms to solve the relaxed version. After obtaining a relaxed solution, if such LP relaxed
+solution respects the integrality constraint, we see that it's indeed a solution to \autoref{formula:TSP}. But if not, we can simply divide the original relaxed LP into two
+sub-problems by \textbf{splitting the feasible region} according to a variable that does not respect integrality in the current relaxed LP solution \(\bm{x}^\ast\),
+\begin{equation}\label{eq:branch-and-bound}
+	x_{i} \leq \left\lfloor x_{i}^\ast \right\rfloor\lor x_{i} \geq \left\lceil x_{i}^\ast \right\rceil,\qquad \exists i\leq p\mid x_{i} ^\ast \notin \mathbb{\MakeUppercase{z}}.
+\end{equation}
+
+We see that by adding such additional constraint in two sub-problems respectively, we get a recursive algorithm called \textbf{Branch-and-Bound} \cite{B&B.ch7}.
+
+\subsubsection{Branching Rules}
+The branch-and-bound algorithm is widely used to solve integer programming problems. We see that the key step in the branch-and-bound algorithm is selecting a non-integer
+variable to \underline{branch on} in \autoref{eq:branch-and-bound}. And as one can expect, some choices may reduce the recursive searching tree
+significantly \cite{B&B.branching-impact}, hence the \emph{branching rules} are the core of modern combinatorial optimization solvers, and it has been the focus of extensive
+research \cite{B&B-branching-rules-research-1, B&B-branching-rules-research-2, B&B-branching-rules-research-3, B&B-branching-rules-research-4}. There are several popular
+strategies \cite{branching-rules-revisited} used in modern solver.
+\begin{enumerate}
+	\item Strong branching. It'll result in the smallest recursive tree by computing the expected bound improvement for \textbf{each} candidate variable before branching by
+	      finding solutions of two LPs for every candidate, which is undoubtedly, very expensive. \cite{Finding-cuts-in-the-TSP}
+	\item Conflict score.
+	\item Pseudo-cost. \cite{B&B-branching-rules-research-2}
+	\item Hand-crafted combination of above.
+	\item Hybrid branching. Which basically computes a strong branching scores only at the beginning of the solving, and gradually switches to other methods mentioned
+	      above \cite{branching-rules-revisited, B&B-branching-rules-research-4}.
+\end{enumerate}
+
+\subsection{Theoretical Framework}
+Our objective now is to learn strong branching strategy without expensive evaluation. And since this is a discrete time control process, hence we model the problem by Markov Decision Process (MDP) \cite{howard1960dynamic}.
+
+\subsubsection{Markov Decision Process (MDP)}
+Given a regular Markov decision process \(\mathcal{M} \coloneqq (\mathcal{S}, \mathcal{A}, p_{\mathrm{init}}, p_{\mathrm{trans}}, R)\), where
+\begin{itemize}
+	\item State space \(\mathcal{S}\)
+	\item Action space \(\mathcal{A}\)
+	\item Initial state distribution \(p_{\mathrm{init}}\colon \mathcal{S} \to \mathbb{R}_{\geq 0}\)
+	\item State transition distribution \(p_{\mathrm{trans}}\colon \mathcal{S}\times \mathcal{A}\times \mathcal{S} \to \mathbb{R}_{\geq 0}\)
+	\item Reward function \(R\colon \mathcal{S} \to \mathbb{R}\)
+\end{itemize}
+
+We note that in the above definition of Markov Decision Process, the reward function \(R\) need not be deterministic. In other words, we can define \(R\) as a random function
+which will take a value based on a particular state in \(\mathcal{S}\) with some randomness. Note that if \(R\) in \(\mathcal{M}\) is equipped with any kind of randomness, we can
+write the reward \(r_t\) at time \(t\) as
+\[
+	r_t\sim p_{\mathrm{reward}}(r_t\mid s_{t-1}, a_{t-1}, s_t),
+\]
+and this can be converted into an equivalent Markov Decision Process \(\mathcal{M}^\prime\) with a deterministic reward function \(R^\prime\), where the randomness is integrated
+into parts of the states.
+
+With an action policy \(\pi \colon \mathcal{A}\times \mathcal{S}\to \mathbb{R}_{\geq 0}\) such that the action \(a_t\) taken at time \(t\) is determined by
+\[
+	a_t\sim \pi(a_t\mid s_t),
+\]
+we see that an MDP can be unrolled to produce a \emph{trajectories} composed by state-action pairs as
+\[
+	\tau = (s_0, a_0, s_1, a_1, \ldots)
+\]
+which obeys the joint distribution
+\[
+	\tau \sim \underbrace{p_{\mathrm{init}}(s_0)}_{\text{initial state}}\prod_{t = 0}^{\infty} \underbrace{\pi(a_t\mid s_t)}_{\text{next action}}\underbrace{p_{\mathrm{trans}}(s_{t+1}\mid a_t, s_t)}_{\text{next state}}.
+\]
+
+\subsubsection{Partially Observable Markov Decision Process (PO-MDP)}
+Follows the same idea from MDP, in the PO-MDP setting deals with the case that when the \textbf{complete} information about the current MDP state \(\mathcal{S}\) is unavailable
+or not necessarily for the decision-making \cite{ASTROM1965174}. Instead, in our case, only a partial \textbf{observation} \(o\in \Omega\) is available, where \(\Omega\) is called the
+\textbf{partial state space}. We can use an active perspective to view the above model, namely we're merely applying a \underline{observation function}
+\(O\colon \mathcal{S}\to \Omega\) to the current state \(s_t\) at each time step \(t\).  Hence, we define a PO-MDP \(\widetilde{\mathcal{M}}\) as a tuple
+\[
+	\widetilde{\mathcal{M}} \coloneqq (\mathcal{S}, \mathcal{A}, p_{\mathrm{init}}, p_{\mathrm{trans}}, R, O).
+\]
+
+Within this setup, a trajectory of PO-MDP takes form as
+\[
+	\tau = (o_0, r_0, a_0, o_1, r_1, a_1, \ldots),
+\]
+where \(o_t\coloneqq O(s_t)\) and \(r_t\coloneqq R(s_t)\). Specifically, noting that here \(r_t\) still depends on the state of the OP-MDP, not the observation.
+
+We introduce a convenience variable \(h_t\colon (o_0, r_0, a_0, \ldots, o_t, r_t)\in \mathcal{H}\), which represents the PO-MDP history at time step \(t\) \textbf{without the
+	action} \(a_t\).  Due to the non-Markovian nature of the trajectories,
+\[
+	o_{t+1}, r_{t+1}\not\perp h_{t-1} \mid o_t,r_t,a_t,
+\]
+namely the decision-maker must take the whole history of observations, rewards and actions into account to decide on an optimal action at current time step \(t\). We then see
+that action policy for PO-MDP takes the form
+\[
+	\widetilde{\pi}\colon \mathcal{A}\times \mathcal{H}\to \mathbb{R}_{\geq 0}
+\]
+such that \(a_t\sim \pi (a_t\mid h_t)\).
+
+\subsection{Markov Control Problem}
+\subsubsection{The MDP Control Problem} We define the MDP control problem as that of finding a policy \(\pi ^\ast\colon \mathcal{A}\times \mathcal{S}\to \mathbb{R}_{\geq 0}\)
+which is optimal with respect to the expected total reward, that is,
+\[
+	\pi^\ast = \underset{\pi}{\arg\max} \lim_{T\to \infty}\mathbb{E}_\tau\left[\sum_{t=0}^T r_t\right],
+\]
+where \(r_t\coloneqq R(s_t)\).
+
+\subsubsection{The PO-MDP Control Problem}
+Similar to the MDP control problem, the objective is to find a policy \(\widetilde{\pi}^\ast\colon \mathcal{A}\times \mathcal{H}\to \mathbb{R}_{\geq 0}\) such that
+it maximizes the expected total rewards, that is,
+\[
+	\widetilde{\pi}^\ast = \underset{\pi}{\arg\max} \lim_{T\to \infty}\mathbb{E}_\tau\left[\sum_{t=0}^T r_t\right],
+\]
+where \(r_t\coloneqq R(s_t)\).
+
+\subsection{Learning Pipeline}
+Since the branch-and-bound variable selection problem can be naturally formulated as a Markov decision process, hence a natural machine learning algorithm to use is reinforcement learning. \cite{sutton2018reinforcement}
+Specifically, since there are some state-of-the-art integers programming solvers out there, for examples, \texttt{Gurobi}\footnote{\url{https://www.gurobi.com/}}, \texttt{SCIP}\footnote{\url{https://www.scipopt.org/}}, etc,
+we decide to try imitating learning\cite{Imitation-Learning-A-Survey-of-Learning-Methods} by learning directly from an expert branching rule.
+
+While there are some related works in this approach \cite{GasseCFCL19} which aims to tackle \textbf{mixed integer linear programming} (MILP), which means there are only some variables have integrality constraints, while
+other variables can be real numbers. But our approach try to extend this further, we're focusing on \texttt{TSP}, which not only is a pure integer programming, and the variables value is bounded to be in \(\{0, 1\}\) only.
+Except all these, since imitating learning can't outperform SOTA solver in its nature, hence though the work in \cite{GasseCFCL19} is interesting, but we still think we can do better by focusing on a particular domain (\texttt{TSP}
+in this case) and try to formulate a problem specific reward function for \texttt{TSP}.
+
+Hence, our proposed learning pipeline is as follows. Firstly, we only use imitating learning following \cite{GasseCFCL19} to obtain a good enough model, then we turn to unsupervised learning setup under the framework of
+reinforcement learning, which should make the network learn some domain-specific property and help to boost the performance.
+
+\subsubsection{Imitating Learning}
+As we mentioned before, the most effective branching strategy is strong branching, hence we train the network by behavioral cloning \cite{Efficient-Training-of-artificial-Neural-Networks-for-Autonomous-Navigation}.
+We first run the SOTA solver and get state-action pairs
+\[
+	\mathcal{\MakeUppercase{d}} = \left\{(s_{i} , \bm{a} _{i} ^\ast)\right\}_{i = 1}^N,
+\]
+and then learn our policy \(\widetilde{\pi} ^\ast\) b minimizing the cross-entropy loss
+\[
+	\mathcal{\MakeUppercase{l}} (\theta ) = - \frac{1}{N}\sum\limits_{(\bm{s}, \bm{a}^\ast)\in \mathcal{\MakeUppercase{d}} }\log \widetilde{\pi}_\theta (\bm{a} ^\ast \mid \bm{s} ).
+\]
+
+Additionally, we access (observe) the state of the branch-and-bound process by directly interacting with the SOTA solvers, specifically, \texttt{SCIP}. The implementation detail follows Gasse et al.\cite{GasseCFCL19}.
+
+\subsubsection{Unsupervised Reinforcement Learning}
+After getting a stable model, we remove the expert's instructions and let the model explore by itself since we're focusing on \texttt{TSP}, which is a particular problem type in pure integer programming. That is, we are now
+going to define a new reward function \(R\colon \mathcal{\MakeUppercase{s}} \to \mathbb{\MakeUppercase{r}} \).
+
+We are still exploring this part, but some useful and observable states can be used in our formulation of \(R\), including
+\begin{enumerate}
+	\item Estimated branching tree sizes and its decreasing rate
+	\item Current tour length and its decreasing rate
+	\item etc.
+\end{enumerate}
+
+And also some ideas about how should this function look like.
+\begin{enumerate}
+	\item Reward decay forcing fast solving.
+	\item Traditional heuristics, e.g. \(k\)-opt \cite{k-opt}.
+	\item Use additional information, like the optimal tour length.
+	\item Random reward for exploring.
+\end{enumerate}
+
+In this way, from the success in \cite{GasseCFCL19}, we're guaranteed with a good enough model status, namely a good enough branching strategy after our first stage. Then, we do not need to worry about the
+technical detail in reinforcement learning like initial training but focus on giving a general pipeline for how to tackle a particular problem in this kind of combinatorial optimization problems.
+
+Besides, there is a reason why we do not use pre-trained models from \cite{GasseCFCL19}. An obvious reason is that our focus is different: \cite{GasseCFCL19} focuses on general MILP, while we specifically focus on
+\texttt{TSP} (Pure IP with bounded variable values), which is a slightly but still different field.\footnote{Using the pre-trained models will be a good idea to see the generalizability in RL after we obtain a good enough reward function.}
+
+\section{Related Work}
+%Jonathan Moore (Summarize the related papers)
+
+%Yi Zhou (state of the art exact solver; our difference with existing work.)
+
+There has been a lot of progress on the symmetric \texttt{TSP} in the last century, as it is one of the
+classical NP-hard combinatorial problems. With the increase in the number of nodes, there is a
+superpolynomial (at least exponential) explosion in the number of potential solutions. This makes the
+\texttt{TSP} problem difficult to solve on two parameters, the first being finding a global shortest route as
+well as reducing the computation complexity in finding this route. Concorde\footnote{\url{http://www.math.uwaterloo.ca/tsp/concorde/}}, written in the ANSI C programming language, is widely recognized as the state-of-the-art(fastest) exact \texttt{TSP} solution for large datasets.
+
+
+Our approach to solve \texttt{TSP} exactly is different from the Concorde approach, as well as the methods mentioned in the papers above. We will first use imitation training, which has been proven to converge fast, to obtain an approximate of the optimal path. Then, we will use our current path to initialize the reinforcement learning in order to obtain the global shortest path. We expect our combination of the two methods on GNN to give promising run time compared to other existing exact solvers.
+
+(I will add some more explanations of the difference once I study our content for section 2 and 3.)
+
+
+
+
+\section{Experimental Results}
+%Pingbang Hu
+Our implementation is based on Ecole\footnote{\url{https://github.com/ds4dm/ecole}}.
+
+%Jonathan Moore (Dataset and Pre-processing)
+For our data, we will be using a data generator created from the Concorde \texttt{TSP} solver. This data generator will allow us to efficiently generate \texttt{TSP} problem sets of any size that we want; additionally, we can use their solver as well in order to first generate our training set for imitation learning. Once we have moved out of imitation learning, it will still be very useful to be able to have the ability to (relatively) quickly check our model's output for correctness.
+
+Fortunately, as long as we design our model around the output of the Concorde \texttt{TSP} generator, we do not need any further pre-processing.
+
+\section{Future Milestone}
+\begin{enumerate}
+	\item Define an explicit reward function.
+	\item Using more sophisticated model in the imitating learning part.
+	\item Benchmarking all results from different exact solver.
+	\item Comparing the performance between using pre-trained model and not using one.
+\end{enumerate}
+
+\section{Conclusion}
+
+\section*{Author Contributions}
+
+
+\section{Example to include figures}
+\begin{figure}[H]
+	\centering
+	%\incfig{pf:col:lec14-7}
+\end{figure}
+
+
+\bibliographystyle{plainnat}
+\bibliography{ref}
+
+\end{document}

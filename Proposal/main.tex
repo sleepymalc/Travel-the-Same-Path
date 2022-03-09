@@ -1,0 +1,152 @@
+\documentclass{article}
+
+% if you need to pass options to natbib, use, e.g.:
+\PassOptionsToPackage{numbers, compress}{natbib}
+% before loading neurips_2021
+
+% ready for submission
+%\usepackage{neurips_2021}
+
+% to compile a preprint version, e.g., for submission to arXiv, add add the
+% [preprint] option:
+%     \usepackage[preprint]{neurips_2021}
+
+% to compile a camera-ready version, add the [final] option, e.g.:
+\usepackage[final]{neurips_2021}
+
+% to avoid loading the natbib package, add option nonatbib:
+%    \usepackage[nonatbib]{neurips_2021}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=purple]{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{xcolor}         % colors
+
+\title{EECS 545 Machine Learning\\Project Proposal\\GNN on Traveling Salesman Problem}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+\author{%
+  Pingbang Hu\\
+  Department of Computer Science\\
+  University of Michigan\\
+  \texttt{pbb@umich.edu} \\
+  \And
+  Jonathan Moore \\
+  Department of Computer Science\\
+  University of Michigan\\
+  \texttt{moorejon@umich.edu} \\
+  \And
+  Yi Zhou \\
+  Department of Math\\
+  University of Michigan\\
+  \texttt{yizho@umich.edu} \\
+  \And
+  Shubham Kumar Pandey \\
+  Department of Statistics\\
+  University of Michigan\\
+  \texttt{pandeysk@umich.edu} \\
+  \And
+  Anuraag Ramesh \\
+  Department of Statistics\\
+  University of Michigan\\
+  \texttt{anuraagr@umich.edu} \\
+}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This is a project proposal of EECS545 at the University of Michigan. We'll formulate the problem about \texttt{TSP}, show the significance of our
+  potential approaches, briefly discuss some related works, and bring up some ideas which can potentially push the limit of this well-studied problem forward.
+
+  \paragraph{Keywords: }Travelling salesman problem, \texttt{TSP}, Graph Neural Network, Deep Learning, Reinforcement Learning, Embedding learning, Link prediction,
+  Combinatorial Optimization, Learning theory.
+\end{abstract}
+
+\section{Problem Statement}\label{problem}
+The travelling salesman problem, also called the travelling salesperson problem or \texttt{TSP}, is a problem as follows. Given a list of cities and the distances between each pair
+of cities, we want to find the shortest possible route that visits each city \emph{exactly once} and returns to the origin city.
+
+Specifically, given an \textbf{undirected weighted graph} \(\mathcal{G} = (\mathcal{E}, \mathcal{V})\), which is an ordered pair of nodes set \(\mathcal{E}\) and edges set
+\(\mathcal{V}\subseteq \mathcal{E}\times\mathcal{E}\) where \(\mathcal{G}\) is equipped with \textbf{spatial structure}. This means that each edge between nodes will have
+different weights and each node will have its coordinates, we want to find a simple cycle that visits every node exactly once while having the smallest cost.
+
+\section{Significance}\label{significance}
+Because of the expressive power of graphs, developing and analyzing graphs using machine learning has become a rising topic in computer science. In recent years, graph neural
+networks (GNN), among its variants, have demonstrated significant potential in many areas.\cite{zhou2021graph} The problems that GNN can solve are classified into the following
+categories: Node/Link Classification, Graph Classification, Graph Visualization, Node/Link Prediction, and Graph Clustering. Its applications have been promising in fields
+including computer vision, natural language processing, chemistry, recommended systems, traffic, and social/brain networks.
+
+We expect our project to further demonstrate the power of GNN, especially its ability to handle large datasets, through applying it to the Travelling Salesman Problem. Since
+\texttt{TSP} has been one of the most intensively studied problems in optimization, numerous solutions have been developed over the years. Most of the solutions use either the
+exact algorithm, which considers all permutations and gives an optimal path, or the heuristic and approximation algorithms, which yields a path that is not necessarily optimal,
+but pretty good in a shorter time. The two algorithms have shown promising results in finding a short path. However, their running time becomes significant as the dataset grows
+larger. Our approach will potentially demonstrate how GNN can handles large datasets better than some of the traditional methods. We could also show that, with some more work,
+GNN could provide promising solutions to both classical and recent computer science problems.
+
+\section{Related Work}\label{related}
+There has been a lot of progress on the symmetric \texttt{TSP} in the last century, as it is one of the classical NP-hard combinatorial problems. With the increase in the number
+of nodes, there is a superpolynomial (at least exponential) explosion in the number of  potential solutions. This makes the \texttt{TSP} problem difficult to solve on two parameters,
+the first being finding a global shortest route as well as reducing the computation complexity in finding this route.
+
+The state-of-the-art \texttt{TSP} solvers such as Concorde\footnote{\url{https://www.math.uwaterloo.ca/tsp/concorde.html}} are exact solvers, these solvers basically rely on
+crafting handful heuristics and approximating the solution. Concorde uses a plane-cutting method, which tries to reduce the solution space. It has been shown that solving
+\texttt{TSP} requires a combination of two algorithms to approximate the shortest path. One algorithm is needed to approximate the set of heuristics to traverse the solution
+space efficiently. The second algorithm uses heuristics and performs an ad-hoc search\cite{abs-1906-01227}.
+
+There are two main types of methods to find the required heuristic for the \texttt{TSP} problem: autoregressive and non-autoregressive deep learning. Autoregressive methods
+are aggressive in their nature, i.e., the updates take place after every iteration. Inversely, non-autoregressive methods are highly parallelized and combine individual results
+at the end.  Studies suggest that non-autoregressive deep learning methods work better for \(\mathrm{NP}\)-hard combinatorial problems like \texttt{TSP}\cite{abs-1906-01227}. The
+structured and non-trivial nature of the optimization problem makes it suitable for neural networks\cite{abs-1906-01227} utilizes a Graph Convolution Network followed by a post-ad-hoc
+beam search algorithm. The above approach when used for a small graph (20 nodes) produces a result of 0.10\% gap from the optimal Concord solver and the computation is \(33\%\) faster.
+
+\cite{joshi2021learning} suggests an alternative to large-scale training computational costs by learning from small-scale \texttt{TSP} and transferring the learned model in a zero-shot
+fashion on larger graphs. Our proposed method tries to implement these ideas by applying GNN in combination with Deep neural networks. \cite{almasan2020deep} justifies this approach by
+comparing its advantages to existing neural network methodology in a more theoretical context. We implement this approach more specifically to the TSP.
+
+\section{Proposed Method}\label{proposed}
+From the existing papers and some state-of-the-art algorithms suggest, we proposed the following potential methods to tackle \texttt{TSP} under GNN.
+\begin{enumerate}
+  \item Semi-supervised learning technique under GNN.
+  \item GNN with Deep Neural Network (DNN).
+  \item GNN with Reinforcement Learning (RL).
+  \item GNN with labeling trick\cite{zhang2022labeling}. This includes two node embedding (essentially will be used on link prediction),
+        subgraph embedding, and so on. The algorithm we'll potentially use is \textbf{SEAL}\footnote{\url{https://github.com/muhanzhang/SEAL}}.
+  \item Link prediction by node prediction technique on GNN.
+\end{enumerate}
+
+Besides training methods, since \texttt{TSP} can be formulated as \emph{Integer programming}\footnote{\url{https://en.wikipedia.org/wiki/Integer_programming}},
+we will (potentially) investigate some theoretical properties about \emph{Integer programming} by optimization theory, under the setup of GNN. Notice that since we
+care about the \textbf{generalization ability} essentially, this part will not be addressed as much as others.
+
+Lastly, since the generalization ability of GNN is hugely impacted by the data sampling method we used for generating training data, hence we will put our focus of
+theoretical analysis on this point, namely to find the best way to generate the training data given a usual input of \texttt{TSP} coordinate and the optimal path.
+
+\section{Evaluation}\label{evaluation}
+
+Our primary way of evaluating our success will be by measuring how close to the optimal solution our models get after various amounts of time compared to more traditional methods. For example,
+we would consider this project a success if our model could, on average, find a path \(1.2\times\) the minimum length in an hour when a more traditional model, on average, could find a path \(1.25\times\) the
+minimum length in the same amount of time (on the same hardware, etc.).
+
+For a more objective goal, we will measure our success based on the relative percentage over the minimum compared to other models. In the previous example, we would score \(.2/.25 = .8\).
+The closer the \(0\) the better, and any value less than \(1\) represents a success.
+
+
+\bibliographystyle{plainnat}
+\bibliography{ref}
+
+\end{document}
