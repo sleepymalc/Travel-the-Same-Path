@@ -25,9 +25,9 @@ class ExploreThenStrongBranch:
         probabilities = [1-self.expert_probability, self.expert_probability]
         expert_chosen = bool(np.random.choice(np.arange(2), p=probabilities))
         if expert_chosen:
-            return (self.strong_branching_function.extract(model,done), True)
+            return (self.strong_branching_function.extract(model, done), True)
         else:
-            return (self.pseudocosts_function.extract(model,done), False)
+            return (self.pseudocosts_function.extract(model, done), False)
 
 
 def send_orders(orders_queue, instances, seed, query_expert_prob, time_limit, out_dir, stop_flag):
@@ -58,7 +58,8 @@ def send_orders(orders_queue, instances, seed, query_expert_prob, time_limit, ou
     while not stop_flag.is_set():
         instance = rng.choice(instances)
         seed = rng.randint(2**32)
-        orders_queue.put([episode, instance, seed, query_expert_prob, time_limit, out_dir])
+        orders_queue.put(
+            [episode, instance, seed, query_expert_prob, time_limit, out_dir])
         episode += 1
 
 
@@ -80,8 +81,8 @@ def make_samples(in_queue, out_queue, stop_flag):
 
         scip_parameters = {'separating/maxrounds': 0, 'presolving/maxrestarts': 0,
                            'limits/time': time_limit, 'timing/clocktype': 2}
-        observation_function = { "scores": ExploreThenStrongBranch(expert_probability=query_expert_prob),
-                                 "node_observation": ecole.observation.NodeBipartite() }
+        observation_function = {"scores": ExploreThenStrongBranch(expert_probability=query_expert_prob),
+                                "node_observation": ecole.observation.NodeBipartite()}
         env = ecole.environment.Branching(observation_function=observation_function,
                                           scip_params=scip_parameters, pseudo_candidates=True)
 
@@ -116,7 +117,7 @@ def make_samples(in_queue, out_queue, stop_flag):
                         'instance': instance,
                         'seed': seed,
                         'data': data,
-                        }, f)
+                    }, f)
                 out_queue.put({
                     'type': 'sample',
                     'episode': episode,
@@ -130,11 +131,13 @@ def make_samples(in_queue, out_queue, stop_flag):
                 observation, action_set, _, done, _ = env.step(action)
             except Exception as e:
                 done = True
-                with open("error_log.txt","a") as f:
-                    f.write(f"Error occurred solving {instance} with seed {seed}\n")
+                with open("error_log.txt", "a") as f:
+                    f.write(
+                        f"Error occurred solving {instance} with seed {seed}\n")
                     f.write(f"{e}\n")
 
-        print(f"[w {threading.current_thread().name}] episode {episode} done, {sample_counter} samples\n", end='')
+        print(
+            f"[w {threading.current_thread().name}] episode {episode} done, {sample_counter} samples\n", end='')
         out_queue.put({
             'type': 'done',
             'episode': episode,
@@ -179,19 +182,19 @@ def collect_samples(instances, out_dir, rng, n_samples, n_jobs,
     # start dispatcher
     dispatcher_stop_flag = threading.Event()
     dispatcher = threading.Thread(
-            target=send_orders,
-            args=(orders_queue, instances, rng.randint(2**32), query_expert_prob,
-                  time_limit, tmp_samples_dir, dispatcher_stop_flag),
-            daemon=True)
+        target=send_orders,
+        args=(orders_queue, instances, rng.randint(2**32), query_expert_prob,
+              time_limit, tmp_samples_dir, dispatcher_stop_flag),
+        daemon=True)
     dispatcher.start()
 
     workers = []
     workers_stop_flag = threading.Event()
     for i in range(n_jobs):
         p = threading.Thread(
-                target=make_samples,
-                args=(orders_queue, answers_queue, workers_stop_flag),
-                daemon=True)
+            target=make_samples,
+            args=(orders_queue, answers_queue, workers_stop_flag),
+            daemon=True)
         workers.append(p)
         p.start()
 
@@ -225,7 +228,8 @@ def collect_samples(instances, out_dir, rng, n_samples, n_jobs,
 
                 # else write sample
                 else:
-                    os.rename(sample['filename'], f'{out_dir}/sample_{i+1}.pkl')
+                    os.rename(sample['filename'],
+                              f'{out_dir}/sample_{i+1}.pkl')
                     in_buffer -= 1
                     i += 1
                     print(f"[m {threading.current_thread().name}] {i} / {n_samples} samples written, "
@@ -234,7 +238,8 @@ def collect_samples(instances, out_dir, rng, n_samples, n_jobs,
                     # early stop dispatcher
                     if in_buffer + i >= n_samples and dispatcher.is_alive():
                         dispatcher_stop_flag.set()
-                        print(f"[m {threading.current_thread().name}] dispatcher stopped...\n", end='')
+                        print(
+                            f"[m {threading.current_thread().name}] dispatcher stopped...\n", end='')
 
                     # as soon as enough samples are collected, stop
                     if i == n_samples:
@@ -252,7 +257,7 @@ if __name__ == '__main__':
     parser.add_argument(
         'problem',
         help='MILP instance type to process.',
-        choices=['setcover', 'cauctions', 'facilities', 'indset', 'mknapsack'],
+        choices=['setcover', 'TSP'],
     )
     parser.add_argument(
         '-s', '--seed',
@@ -276,37 +281,27 @@ if __name__ == '__main__':
     node_record_prob = 0.05
     time_limit = 3600
 
+    random_generators = ecole.RandomGenerator(545)
+    for i in range(train_size):
+        instances = ecole.instance.SetCoverGenerator(
+            n_rows=500, n_cols=1000, density=node_record_prob, rng=random_generators)
+
     if args.problem == 'setcover':
-        instances_train = glob.glob('data/instances/setcover/train_500r_1000c_0.05d/*.lp')
-        instances_valid = glob.glob('data/instances/setcover/valid_500r_1000c_0.05d/*.lp')
-        instances_test = glob.glob('data/instances/setcover/test_500r_1000c_0.05d/*.lp')
+        instances_train = glob.glob(
+            'data/instances/setcover/train_500r_1000c_0.05d/*.lp')
+        instances_valid = glob.glob(
+            'data/instances/setcover/valid_500r_1000c_0.05d/*.lp')
+        instances_test = glob.glob(
+            'data/instances/setcover/test_500r_1000c_0.05d/*.lp')
         out_dir = 'data/samples/setcover/500r_1000c_0.05d'
-
-    elif args.problem == 'cauctions':
-        instances_train = glob.glob('data/instances/cauctions/train_100_500/*.lp')
-        instances_valid = glob.glob('data/instances/cauctions/valid_100_500/*.lp')
-        instances_test = glob.glob('data/instances/cauctions/test_100_500/*.lp')
-        out_dir = 'data/samples/cauctions/100_500'
-
-    elif args.problem == 'indset':
-        instances_train = glob.glob('data/instances/indset/train_500_4/*.lp')
-        instances_valid = glob.glob('data/instances/indset/valid_500_4/*.lp')
-        instances_test = glob.glob('data/instances/indset/test_500_4/*.lp')
-        out_dir = 'data/samples/indset/500_4'
-
-    elif args.problem == 'facilities':
-        instances_train = glob.glob('data/instances/facilities/train_100_100_5/*.lp')
-        instances_valid = glob.glob('data/instances/facilities/valid_100_100_5/*.lp')
-        instances_test = glob.glob('data/instances/facilities/test_100_100_5/*.lp')
-        out_dir = 'data/samples/facilities/100_100_5'
-        time_limit = 600
-
-    elif args.problem == 'mknapsack':
-        instances_train = glob.glob('data/instances/mknapsack/train_100_6/*.lp')
-        instances_valid = glob.glob('data/instances/mknapsack/valid_100_6/*.lp')
-        instances_test = glob.glob('data/instances/mknapsack/test_100_6/*.lp')
-        out_dir = 'data/samples/mknapsack/100_6'
-        time_limit = 60
+    elif args.problem == 'TSP':
+        instances_train = glob.glob(
+            'data/instances/TSP/train_500r_1000c_0.05d/*.lp')
+        instances_valid = glob.glob(
+            'data/instances/TSP/valid_500r_1000c_0.05d/*.lp')
+        instances_test = glob.glob(
+            'data/instances/TSP/test_500r_1000c_0.05d/*.lp')
+        out_dir = 'data/samples/TSP/500r_1000c_0.05d'
 
     else:
         raise NotImplementedError
