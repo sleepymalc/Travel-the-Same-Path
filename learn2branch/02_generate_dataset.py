@@ -257,7 +257,7 @@ if __name__ == '__main__':
     parser.add_argument(
         'problem',
         help='MILP instance type to process.',
-        choices=['setcover', 'TSP'],
+        choices=['setcover', 'cauctions', 'facilities', 'indset', 'mknapsack'],
     )
     parser.add_argument(
         '-s', '--seed',
@@ -281,11 +281,6 @@ if __name__ == '__main__':
     node_record_prob = 0.05
     time_limit = 3600
 
-    random_generators = ecole.RandomGenerator(545)
-    for i in range(train_size):
-        instances = ecole.instance.SetCoverGenerator(
-            n_rows=500, n_cols=1000, density=node_record_prob, rng=random_generators)
-
     if args.problem == 'setcover':
         instances_train = glob.glob(
             'data/instances/setcover/train_500r_1000c_0.05d/*.lp')
@@ -294,14 +289,40 @@ if __name__ == '__main__':
         instances_test = glob.glob(
             'data/instances/setcover/test_500r_1000c_0.05d/*.lp')
         out_dir = 'data/samples/setcover/500r_1000c_0.05d'
-    elif args.problem == 'TSP':
+
+    elif args.problem == 'cauctions':
         instances_train = glob.glob(
-            'data/instances/TSP/train_500r_1000c_0.05d/*.lp')
+            'data/instances/cauctions/train_100_500/*.lp')
         instances_valid = glob.glob(
-            'data/instances/TSP/valid_500r_1000c_0.05d/*.lp')
+            'data/instances/cauctions/valid_100_500/*.lp')
         instances_test = glob.glob(
-            'data/instances/TSP/test_500r_1000c_0.05d/*.lp')
-        out_dir = 'data/samples/TSP/500r_1000c_0.05d'
+            'data/instances/cauctions/test_100_500/*.lp')
+        out_dir = 'data/samples/cauctions/100_500'
+
+    elif args.problem == 'indset':
+        instances_train = glob.glob('data/instances/indset/train_500_4/*.lp')
+        instances_valid = glob.glob('data/instances/indset/valid_500_4/*.lp')
+        instances_test = glob.glob('data/instances/indset/test_500_4/*.lp')
+        out_dir = 'data/samples/indset/500_4'
+
+    elif args.problem == 'facilities':
+        instances_train = glob.glob(
+            'data/instances/facilities/train_100_100_5/*.lp')
+        instances_valid = glob.glob(
+            'data/instances/facilities/valid_100_100_5/*.lp')
+        instances_test = glob.glob(
+            'data/instances/facilities/test_100_100_5/*.lp')
+        out_dir = 'data/samples/facilities/100_100_5'
+        time_limit = 600
+
+    elif args.problem == 'mknapsack':
+        instances_train = glob.glob(
+            'data/instances/mknapsack/train_100_6/*.lp')
+        instances_valid = glob.glob(
+            'data/instances/mknapsack/valid_100_6/*.lp')
+        instances_test = glob.glob('data/instances/mknapsack/test_100_6/*.lp')
+        out_dir = 'data/samples/mknapsack/100_6'
+        time_limit = 60
 
     else:
         raise NotImplementedError
