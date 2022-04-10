@@ -139,7 +139,7 @@ class Graph:
         return graph
 
 
-def generate_setcover(nrows, ncols, density, filename, rng, max_coef=100):
+def generate_tsp(nrows, ncols, density, filename, rng, max_coef=100):
     """
     Generates a setcover instance with specified characteristics, and writes
     it to a file in the LP format.
@@ -322,7 +322,7 @@ if __name__ == '__main__':
         # actually generate the instances
         for filename, nrows, ncols, dens in zip(filenames, nrowss, ncolss, denss):
             print(f'  generating file {filename} ...')
-            generate_setcover(nrows=nrows, ncols=ncols, density=dens,
-                              filename=filename, rng=rng, max_coef=max_coef)
+            generate_tsp(nrows=nrows, ncols=ncols, density=dens,
+                         filename=filename, rng=rng, max_coef=max_coef)
 
         print('done.')
