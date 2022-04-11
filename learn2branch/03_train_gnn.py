@@ -3,6 +3,7 @@ import sys
 import argparse
 import pathlib
 import numpy as np
+import parameters
 
 
 def pretrain(policy, pretrain_loader):
@@ -87,16 +88,10 @@ if __name__ == "__main__":
     lr = 1e-3
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
+    seed = parameters.seed
 
-    problem_folders = {
-        'setcover': 'setcover/500r_1000c_0.05d',
-        'cauctions': 'cauctions/100_500',
-        'facilities': 'facilities/100_100_5',
-        'indset': 'indset/500_4',
-        'mknapsack': 'mknapsack/100_6',
-    }
-    problem_folder = problem_folders[args.problem]
-    running_dir = f"model/{args.problem}/{args.seed}"
+    problem_folder = f'tsp/{parameters.n}n'
+    running_dir = f"model/tsp/{seed}"
     os.makedirs(running_dir, exist_ok=True)
 
     ### PYTORCH SETUP ###
@@ -106,6 +101,7 @@ if __name__ == "__main__":
     else:
         os.environ['CUDA_VISIBLE_DEVICES'] = f'{args.gpu}'
         device = f"cuda:0"
+
     import torch
     import torch.nn.functional as F
     import torch_geometric
@@ -113,8 +109,8 @@ if __name__ == "__main__":
     sys.path.insert(0, os.path.abspath(f'model'))
     from model import GNNPolicy
 
-    rng = np.random.RandomState(args.seed)
-    torch.manual_seed(args.seed)
+    rng = np.random.RandomState(seed)
+    torch.manual_seed(seed)
 
     ### LOG ###
     logfile = os.path.join(running_dir, 'train_log.txt')
@@ -130,7 +126,7 @@ if __name__ == "__main__":
     log(f"top_k: {top_k}", logfile)
     log(f"problem: {args.problem}", logfile)
     log(f"gpu: {args.gpu}", logfile)
-    log(f"seed {args.seed}", logfile)
+    log(f"seed {seed}", logfile)
 
     policy = GNNPolicy().to(device)
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
