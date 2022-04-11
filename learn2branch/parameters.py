@@ -14,7 +14,7 @@
 # # 03_train
 
 # default parameters
-n = 50
+n = 10
 seed = 545
 
 # 01_instance
