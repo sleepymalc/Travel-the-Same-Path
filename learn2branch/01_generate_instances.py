@@ -1,10 +1,11 @@
 import os
 import argparse
 import numpy as np
+import parameters
 from docplex.mp.model import Model
 
 
-def generate_tsp(n, filename):
+def generate_tsp(n, filename, seed=545):
     """
     Generate a TSP instance in CPLEX LP format.
     Parameters
@@ -17,7 +18,7 @@ def generate_tsp(n, filename):
     cities = [i for i in range(n)]
     edges = [(i, j) for i in cities for j in cities if i != j]
     random = np.random
-    random.seed(545)
+    random.seed(seed)
     coord_x = random.rand(n) * 100
     coord_y = random.rand(n) * 100
     distancia = {(i, j): np.hypot(
@@ -37,16 +38,6 @@ def generate_tsp(n, filename):
                               name='order_(%d,_%d)' % (i, j))
     print(filename)
     mdl.export_as_lp(filename)
-
-    # with open(filename, 'w') as lp_file:
-    #     lp_file.write(
-    #         "maximize\nOBJ:" + "".join([f" + 1 x{node+1}" for node in range(len(graph))]) + "\n")
-    #     lp_file.write("\nsubject to\n")
-    #     for count, group in enumerate(inequalities):
-    #         lp_file.write(
-    #             f"C{count+1}:" + "".join([f" + x{node+1}" for node in sorted(group)]) + " <= 1\n")
-    #     lp_file.write(
-    #         "\nbinary\n" + " ".join([f"x{node+1}" for node in range(len(graph))]) + "\n")
 
 
 if __name__ == '__main__':
@@ -76,9 +67,8 @@ if __name__ == '__main__':
         filenames = []
         nums = []
 
-        n = 1
         # train instances
-        n = 10000
+        n = parameters.train_instance
         lp_dir = f'data/instances/tsp/train_{num}n'
         print(f"{n} instances in {lp_dir}")
         os.makedirs(lp_dir)
@@ -87,7 +77,7 @@ if __name__ == '__main__':
         nums.extend([num] * n)
 
         # validation instances
-        n = 2000
+        n = parameters.valid_instance
         lp_dir = f'data/instances/tsp/valid_{num}n'
         print(f"{n} instances in {lp_dir}")
         os.makedirs(lp_dir)
@@ -96,7 +86,7 @@ if __name__ == '__main__':
         nums.extend([num] * n)
 
         # small transfer instances
-        n = 100
+        n = parameters.transfer_instance
         num = int(args.num / 2)
         lp_dir = f'data/instances/tsp/transfer_{num}n'
         print(f"{n} instances in {lp_dir}")
@@ -106,7 +96,7 @@ if __name__ == '__main__':
         nums.extend([num] * n)
 
         # medium transfer instances
-        n = 100
+        n = parameters.transfer_instance
         num = int(args.num / 1.5)
         lp_dir = f'data/instances/tsp/transfer_{num}n'
         print(f"{n} instances in {lp_dir}")
@@ -116,7 +106,7 @@ if __name__ == '__main__':
         nums.extend([num] * n)
 
         # big transfer instances
-        n = 100
+        n = parameters.transfer_instance
         num = int(args.num * 2)
         lp_dir = f'data/instances/tsp/transfer_{num}n'
         print(f"{n} instances in {lp_dir}")
@@ -126,7 +116,7 @@ if __name__ == '__main__':
         nums.extend([num] * n)
 
         # test instances
-        n = 2000
+        n = parameters.test_instance
         num = int(args.num)
         lp_dir = f'data/instances/tsp/test_{num}n'
         print(f"{n} instances in {lp_dir}")
@@ -138,7 +128,7 @@ if __name__ == '__main__':
         # actually generate the instances
         for filename, num in zip(filenames, nums):
             print(f'  generating file {filename} ...')
-            generate_tsp(n=num, filename=filename)
+            generate_tsp(n=num, filename=filename, seed=args.seed)
 
         print('done.')
     else:
