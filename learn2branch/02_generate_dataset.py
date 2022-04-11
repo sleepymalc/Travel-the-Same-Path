@@ -256,17 +256,6 @@ def collect_samples(instances, out_dir, rng, n_samples, n_jobs,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'problem',
-        help='MILP instance type to process.',
-        choices=['tsp'],
-    )
-    parser.add_argument(
-        '-s', '--seed',
-        help='Random generator seed.',
-        type=int,
-        default=0,
-    )
-    parser.add_argument(
         '-j', '--njobs',
         help='Number of parallel jobs.',
         type=int,
@@ -274,7 +263,7 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
 
-    print(f"seed {args.seed}")
+    seed = parameters.seed
 
     train_size = parameters.train_size
     valid_size = parameters.valid_size
@@ -284,12 +273,12 @@ if __name__ == '__main__':
 
     if args.problem == 'tsp':
         instances_train = glob.glob(
-            'data/instances/tsp/train_50n/*.lp')
+            f'data/instances/tsp/train_{parameters.n}n/*.lp')
         instances_valid = glob.glob(
-            'data/instances/tsp/valid_50n/*.lp')
+            f'data/instances/tsp/valid_{parameters.n}n/*.lp')
         instances_test = glob.glob(
-            'data/instances/tsp/test_50n/*.lp')
-        out_dir = 'data/samples/tsp/50n'
+            f'data/instances/tsp/test_{parameters.n}n/*.lp')
+        out_dir = f'data/samples/tsp/{parameters.n}n'
     else:
         raise NotImplementedError
 
@@ -300,17 +289,17 @@ if __name__ == '__main__':
     # create output directory, throws an error if it already exists
     os.makedirs(out_dir, exist_ok=True)
 
-    rng = np.random.RandomState(args.seed)
+    rng = np.random.RandomState(seed)
     collect_samples(instances_train, out_dir + '/train', rng, train_size,
                     args.njobs, query_expert_prob=node_record_prob,
                     time_limit=time_limit)
 
-    rng = np.random.RandomState(args.seed + 1)
+    rng = np.random.RandomState(seed + 1)
     collect_samples(instances_valid, out_dir + '/valid', rng, test_size,
                     args.njobs, query_expert_prob=node_record_prob,
                     time_limit=time_limit)
 
-    rng = np.random.RandomState(args.seed + 2)
+    rng = np.random.RandomState(seed + 2)
     collect_samples(instances_test, out_dir + '/test', rng, test_size,
                     args.njobs, query_expert_prob=node_record_prob,
                     time_limit=time_limit)

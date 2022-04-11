@@ -21,12 +21,13 @@ def generate_tsp(n, filename, seed=545):
     random.seed(seed)
     coord_x = random.rand(n) * 100
     coord_y = random.rand(n) * 100
-    distancia = {(i, j): np.hypot(
+    distances = {(i, j): np.hypot(
         coord_x[i] - coord_x[j], coord_y[i] - coord_y[j]) for i, j in edges}
+
     mdl = Model('TSP')
     x = mdl.binary_var_dict(edges, name='x')
     d = mdl.continuous_var_dict(cities, name='d')
-    mdl.minimize(mdl.sum(distancia[i]*x[i] for i in edges))
+    mdl.minimize(mdl.sum(distances[i]*x[i] for i in edges))
     for c in cities:
         mdl.add_constraint(
             mdl.sum(x[(i, j)] for i, j in edges if i == c) == 1, ctname='out_%d' % c)
@@ -41,95 +42,73 @@ def generate_tsp(n, filename, seed=545):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'problem',
-        help='MILP instance type to process.',
-        choices=['tsp'],
-    )
-    parser.add_argument(
-        '-s', '--seed',
-        help='Random generator seed (default 0).',
-        # type=utilities.valid_seed,
-        default=0,
-    )
-    parser.add_argument(
-        '-n', '--num',
-        help='Number of nodes',
-        type=int,
-        default=50,
-    )
-    args = parser.parse_args()
+    num = parameters.n
+    seed = parameters.seed
 
-    if args.problem == 'tsp':
-        num = int(args.num)
+    filenames = []
+    nums = []
 
-        filenames = []
-        nums = []
+    # train instances
+    n = parameters.train_instance
+    lp_dir = f'data/instances/tsp/train_{num}n'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend(
+        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([num] * n)
 
-        # train instances
-        n = parameters.train_instance
-        lp_dir = f'data/instances/tsp/train_{num}n'
-        print(f"{n} instances in {lp_dir}")
-        os.makedirs(lp_dir)
-        filenames.extend(
-            [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-        nums.extend([num] * n)
+    # validation instances
+    n = parameters.valid_instance
+    lp_dir = f'data/instances/tsp/valid_{num}n'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend(
+        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([num] * n)
 
-        # validation instances
-        n = parameters.valid_instance
-        lp_dir = f'data/instances/tsp/valid_{num}n'
-        print(f"{n} instances in {lp_dir}")
-        os.makedirs(lp_dir)
-        filenames.extend(
-            [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-        nums.extend([num] * n)
+    # small transfer instances
+    n = parameters.transfer_instance
+    num = int(parameters.n / 2)
+    lp_dir = f'data/instances/tsp/transfer_{num}n'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend(
+        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([num] * n)
 
-        # small transfer instances
-        n = parameters.transfer_instance
-        num = int(args.num / 2)
-        lp_dir = f'data/instances/tsp/transfer_{num}n'
-        print(f"{n} instances in {lp_dir}")
-        os.makedirs(lp_dir)
-        filenames.extend(
-            [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-        nums.extend([num] * n)
+    # medium transfer instances
+    n = parameters.transfer_instance
+    num = int(parameters.n / 1.5)
+    lp_dir = f'data/instances/tsp/transfer_{num}n'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend(
+        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([num] * n)
 
-        # medium transfer instances
-        n = parameters.transfer_instance
-        num = int(args.num / 1.5)
-        lp_dir = f'data/instances/tsp/transfer_{num}n'
-        print(f"{n} instances in {lp_dir}")
-        os.makedirs(lp_dir)
-        filenames.extend(
-            [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-        nums.extend([num] * n)
+    # big transfer instances
+    n = parameters.transfer_instance
+    num = int(parameters.n * 2)
+    lp_dir = f'data/instances/tsp/transfer_{num}n'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend(
+        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([num] * n)
 
-        # big transfer instances
-        n = parameters.transfer_instance
-        num = int(args.num * 2)
-        lp_dir = f'data/instances/tsp/transfer_{num}n'
-        print(f"{n} instances in {lp_dir}")
-        os.makedirs(lp_dir)
-        filenames.extend(
-            [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-        nums.extend([num] * n)
+    # test instances
+    n = parameters.test_instance
+    num = int(parameters.n)
+    lp_dir = f'data/instances/tsp/test_{num}n'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend(
+        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([num] * n)
 
-        # test instances
-        n = parameters.test_instance
-        num = int(args.num)
-        lp_dir = f'data/instances/tsp/test_{num}n'
-        print(f"{n} instances in {lp_dir}")
-        os.makedirs(lp_dir)
-        filenames.extend(
-            [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-        nums.extend([num] * n)
+    # actually generate the instances
+    for filename, num in zip(filenames, nums):
+        print(f'  generating file {filename} ...')
+        generate_tsp(n=num, filename=filename, seed=seed)
 
-        # actually generate the instances
-        for filename, num in zip(filenames, nums):
-            print(f'  generating file {filename} ...')
-            generate_tsp(n=num, filename=filename, seed=args.seed)
-
-        print('done.')
-    else:
-        raise NotImplementedError
+    print('done.')
