@@ -12,7 +12,9 @@ def pretrain(policy, pretrain_loader):
     while True:
         for batch in pretrain_loader:
             batch.to(device)
-            if not policy.pre_train(batch.constraint_features, batch.edge_index, batch.edge_attr, batch.variable_features):
+            if not policy.pre_train(batch.constraint_features,
+                                    batch.edge_index, batch.edge_attr,
+                                    batch.variable_features):
                 break
 
         if policy.pre_train_next() is None:
@@ -33,19 +35,20 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
             logits = policy(batch.constraint_features, batch.edge_index,
                             batch.edge_attr, batch.variable_features)
             logits = pad_tensor(logits[batch.candidates], batch.nb_candidates)
-            cross_entropy_loss = F.cross_entropy(
-                logits, batch.candidate_choices, reduction='mean')
+            cross_entropy_loss = F.cross_entropy(logits,
+                                                 batch.candidate_choices,
+                                                 reduction='mean')
             entropy = (-F.softmax(logits, dim=-1) *
                        F.log_softmax(logits, dim=-1)).sum(-1).mean()
-            loss = cross_entropy_loss - entropy_bonus*entropy
+            loss = cross_entropy_loss - entropy_bonus * entropy
 
             if optimizer is not None:
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
 
-            true_scores = pad_tensor(
-                batch.candidate_scores, batch.nb_candidates)
+            true_scores = pad_tensor(batch.candidate_scores,
+                                     batch.nb_candidates)
             true_bestscore = true_scores.max(dim=-1, keepdims=True).values
 
             kacc = []
@@ -73,10 +76,11 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '-g', '--gpu',
+        '-g',
+        '--gpu',
         help='CUDA GPU id (-1 for CPU).',
         type=int,
-        default=0,
+        eardefault=0,
     )
     args = parser.parse_args()
 
@@ -124,27 +128,35 @@ if __name__ == "__main__":
     log(f"lr: {lr}", logfile)
     log(f"entropy bonus: {entropy_bonus}", logfile)
     log(f"top_k: {top_k}", logfile)
-    log(f"problem: {args.problem}", logfile)
     log(f"gpu: {args.gpu}", logfile)
     log(f"seed {seed}", logfile)
 
     policy = GNNPolicy().to(device)
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
-    scheduler = Scheduler(optimizer, mode='min',
-                          patience=10, factor=0.2, verbose=True)
+    scheduler = Scheduler(optimizer,
+                          mode='min',
+                          patience=10,
+                          factor=0.2,
+                          verbose=True)
 
-    train_files = [str(file) for file in (pathlib.Path(
-        f'data/samples')/problem_folder/'train').glob('sample_*.pkl')]
+    train_files = [
+        str(file) for file in (pathlib.Path(f'data/samples') / problem_folder /
+                               'train').glob('sample_*.pkl')
+    ]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
-    valid_files = [str(file) for file in (pathlib.Path(
-        f'data/samples')/problem_folder/'valid').glob('sample_*.pkl')]
+    valid_files = [
+        str(file) for file in (pathlib.Path(f'data/samples') / problem_folder /
+                               'valid').glob('sample_*.pkl')
+    ]
 
     pretrain_data = GraphDataset(pretrain_files)
-    pretrain_loader = torch_geometric.loader.DataLoader(
-        pretrain_data, pretrain_batch_size, shuffle=False)
+    pretrain_loader = torch_geometric.loader.DataLoader(pretrain_data,
+                                                        pretrain_batch_size,
+                                                        shuffle=False)
     valid_data = GraphDataset(valid_files)
-    valid_loader = torch_geometric.loader.DataLoader(
-        valid_data, valid_batch_size, shuffle=False)
+    valid_loader = torch_geometric.loader.DataLoader(valid_data,
+                                                     valid_batch_size,
+                                                     shuffle=False)
 
     for epoch in range(max_epochs + 1):
         log(f"EPOCH {epoch}...", logfile)
@@ -152,36 +164,47 @@ if __name__ == "__main__":
             n = pretrain(policy, pretrain_loader)
             log(f"PRETRAINED {n} LAYERS", logfile)
         else:
-            epoch_train_files = rng.choice(train_files, int(
-                np.floor(10000/batch_size))*batch_size, replace=True)
+            epoch_train_files = rng.choice(train_files,
+                                           int(np.floor(10000 / batch_size)) *
+                                           batch_size,
+                                           replace=True)
             train_data = GraphDataset(epoch_train_files)
-            train_loader = torch_geometric.data.DataLoader(
-                train_data, batch_size, shuffle=True)
-            train_loss, train_kacc, entropy = process(
-                policy, train_loader, top_k, optimizer)
-            log(f"TRAIN LOSS: {train_loss:0.3f} " + "".join(
-                [f" acc@{k}: {acc:0.3f}" for k, acc in zip(top_k, train_kacc)]), logfile)
+            train_loader = torch_geometric.data.DataLoader(train_data,
+                                                           batch_size,
+                                                           shuffle=True)
+            train_loss, train_kacc, entropy = process(policy, train_loader,
+                                                      top_k, optimizer)
+            log(
+                f"TRAIN LOSS: {train_loss:0.3f} " + "".join([
+                    f" acc@{k}: {acc:0.3f}"
+                    for k, acc in zip(top_k, train_kacc)
+                ]), logfile)
 
         # TEST
-        valid_loss, valid_kacc, entropy = process(
-            policy, valid_loader, top_k, None)
-        log(f"VALID LOSS: {valid_loss:0.3f} " + "".join(
-            [f" acc@{k}: {acc:0.3f}" for k, acc in zip(top_k, valid_kacc)]), logfile)
+        valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k,
+                                                  None)
+        log(
+            f"VALID LOSS: {valid_loss:0.3f} " + "".join(
+                [f" acc@{k}: {acc:0.3f}"
+                 for k, acc in zip(top_k, valid_kacc)]), logfile)
 
         scheduler.step(valid_loss)
         if scheduler.num_bad_epochs == 0:
-            torch.save(policy.state_dict(), pathlib.Path(
-                running_dir)/'train_params.pkl')
+            torch.save(policy.state_dict(),
+                       pathlib.Path(running_dir) / 'train_params.pkl')
             log(f"  best model so far", logfile)
         elif scheduler.num_bad_epochs == 10:
-            log(f"  10 epochs without improvement, decreasing learning rate", logfile)
+            log(f"  10 epochs without improvement, decreasing learning rate",
+                logfile)
         elif scheduler.num_bad_epochs == 20:
             log(f"  20 epochs without improvement, early stopping", logfile)
             break
 
-    policy.load_state_dict(torch.load(
-        pathlib.Path(running_dir)/'train_params.pkl'))
-    valid_loss, valid_kacc, entropy = process(
-        policy, valid_loader, top_k, None)
-    log(f"BEST VALID LOSS: {valid_loss:0.3f} " + "".join(
-        [f" acc@{k}: {acc:0.3f}" for k, acc in zip(top_k, valid_kacc)]), logfile)
+    policy.load_state_dict(
+        torch.load(pathlib.Path(running_dir) / 'train_params.pkl'))
+    valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k,
+                                              None)
+    log(
+        f"BEST VALID LOSS: {valid_loss:0.3f} " +
+        "".join([f" acc@{k}: {acc:0.3f}"
+                 for k, acc in zip(top_k, valid_kacc)]), logfile)
