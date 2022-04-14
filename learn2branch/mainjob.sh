@@ -5,13 +5,15 @@
 #SBATCH --mail-user=pbb@umich.edu
 #SBATCH --mail-type=END,FAIL
 
-#SBATCH --partition=standard
+#SBATCH --partition=gpu
 
 #SBATCH --nodes=1
 
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=16gb
+
+#SBATCH --gres=gpu:1
 
 #SBATCH --time=10-00:00:00
 
