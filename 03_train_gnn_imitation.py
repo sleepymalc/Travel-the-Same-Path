@@ -87,17 +87,9 @@ if __name__ == "__main__":
     parser.add_argument(
         '-n',
         '--num',
-        help='tsp size.',
+        help='tsp size train on. -1 if mixed training',
         type=int,
         default=15,
-    )
-
-    parser.add_argument(
-        '-m',
-        '--mixedTraining',
-        help='mixed size training or not',
-        default=False,
-        type=bool,
     )
 
     args = parser.parse_args()
@@ -113,7 +105,11 @@ if __name__ == "__main__":
     seed = parameters.seed
     tsp_size = int(args.num)
 
-    running_dir = f"model/imitation/{tsp_size}n"
+    if tsp_size == -1:
+        running_dir = f"model/imitation/mixed"
+    else:
+        running_dir = f"model/imitation/{tsp_size}n"
+
     os.makedirs(running_dir, exist_ok=True)
 
     ### PYTORCH SETUP ###
@@ -135,10 +131,7 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    if args.mixedTraining:
-        logfile = os.path.join(running_dir, f'train_{tsp_size}n_log.txt')
-    else:
-        logfile = os.path.join(running_dir, f'train_mixed_log.txt')
+    logfile = os.path.join(running_dir, f'train_log.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 
