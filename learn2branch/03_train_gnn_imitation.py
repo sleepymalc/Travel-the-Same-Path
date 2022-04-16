@@ -92,6 +92,14 @@ if __name__ == "__main__":
         default=15,
     )
 
+    parser.add_argument(
+        '-m',
+        '--mixedTraining',
+        help='mixed size training or not',
+        default=False,
+        type=bool,
+    )
+
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
@@ -128,7 +136,10 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    logfile = os.path.join(running_dir, 'train_log.txt')
+    if args.mixedTraining:
+        logfile = os.path.join(running_dir, f'train_{tsp_size}n_log.txt')
+    else:
+        logfile = os.path.join(running_dir, f'train_mixed_log.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 

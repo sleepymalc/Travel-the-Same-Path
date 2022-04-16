@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=data_generation
+#SBATCH --job-name=reinforce
 
 #SBATCH --mail-user=<username>@umich.edu
 
@@ -27,8 +27,7 @@ conda activate ecole
 
 cd /home/pbb/Project/learn2branch/
 
-python 02_generate_dataset.py -n 25 -j 24
-
+python 04_train_gnn_reinforce.py -n 15 -m False -g 0
 
 /bin/hostname
 sleep 60
