@@ -94,6 +94,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        '-l',
+        '--load',
+        help='load model from file (specify by path)',
+        type=str,
+        default='model/imitation/15',
+    )
+
+    parser.add_argument(
         '-m',
         '--mixedTraining',
         help='mixed size training or not',
@@ -112,9 +120,9 @@ if __name__ == "__main__":
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
+    tsp_size = int(args.num)
 
-    problem_folder = f'tsp/{parameters.n}n'
-    running_dir = f"model/tsp/{seed}"
+    running_dir = f"model/reinforce/{tsp_size}n"
     os.makedirs(running_dir, exist_ok=True)
 
     ### PYTORCH SETUP ###
@@ -136,7 +144,10 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    logfile = os.path.join(running_dir, 'train_log.txt')
+    if args.mixedTraining:
+        logfile = os.path.join(running_dir, f'train_{tsp_size}n_log.txt')
+    else:
+        logfile = os.path.join(running_dir, f'train_mixed_log.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 
@@ -159,12 +170,12 @@ if __name__ == "__main__":
                           verbose=True)
 
     train_files = [
-        str(file) for file in (pathlib.Path(f'data/samples') / problem_folder /
+        str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') /
                                'train').glob('sample_*.pkl')
     ]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
     valid_files = [
-        str(file) for file in (pathlib.Path(f'data/samples') / problem_folder /
+        str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') /
                                'valid').glob('sample_*.pkl')
     ]
 

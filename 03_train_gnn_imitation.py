@@ -113,8 +113,7 @@ if __name__ == "__main__":
     seed = parameters.seed
     tsp_size = int(args.num)
 
-    problem_folder = f'tsp/{tsp_size}n'
-    running_dir = f"model/imitation"
+    running_dir = f"model/imitation/{tsp_size}n"
     os.makedirs(running_dir, exist_ok=True)
 
     ### PYTORCH SETUP ###
@@ -162,13 +161,13 @@ if __name__ == "__main__":
                           verbose=True)
 
     train_files = [
-        str(file) for file in (pathlib.Path(f'tsp{tsp_size}_data/samples') /
-                               problem_folder / 'train').glob('sample_*.pkl')
+        str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') /
+                               'train').glob('sample_*.pkl')
     ]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
     valid_files = [
-        str(file) for file in (pathlib.Path(f'tsp{tsp_size}_data/samples') /
-                               problem_folder / 'valid').glob('sample_*.pkl')
+        str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') /
+                               'valid').glob('sample_*.pkl')
     ]
 
     pretrain_data = GraphDataset(pretrain_files)
