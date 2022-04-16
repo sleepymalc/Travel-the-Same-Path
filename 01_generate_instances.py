@@ -1,5 +1,4 @@
 import os
-import argparse
 import numpy as np
 import parameters
 from docplex.mp.model import Model
@@ -21,24 +20,18 @@ def generate_tsp(n, filename, seed=545):
     random.seed(seed)
     coord_x = random.rand(n) * 100
     coord_y = random.rand(n) * 100
-    distances = {(i, j): np.hypot(coord_x[i] - coord_x[j],
-                                  coord_y[i] - coord_y[j])
-                 for i, j in edges}
+    distances = {(i, j): np.hypot(coord_x[i] - coord_x[j], coord_y[i] - coord_y[j]) for i, j in edges}
 
     mdl = Model('TSP')
     x = mdl.binary_var_dict(edges, name='x')
     d = mdl.continuous_var_dict(cities, name='d')
     mdl.minimize(mdl.sum(distances[i] * x[i] for i in edges))
     for c in cities:
-        mdl.add_constraint(mdl.sum(x[(i, j)] for i, j in edges if i == c) == 1,
-                           ctname='out_%d' % c)
-        mdl.add_constraint(mdl.sum(x[(i, j)] for i, j in edges if j == c) == 1,
-                           ctname='in_%d' % c)
+        mdl.add_constraint(mdl.sum(x[(i, j)] for i, j in edges if i == c) == 1, ctname='out_%d' % c)
+        mdl.add_constraint(mdl.sum(x[(i, j)] for i, j in edges if j == c) == 1, ctname='in_%d' % c)
     for i, j in edges:
         if j != 0:
-            mdl.add_indicator(x[(i, j)],
-                              d[i] + 1 == d[j],
-                              name='order_(%d,_%d)' % (i, j))
+            mdl.add_indicator(x[(i, j)], d[i] + 1 == d[j], name='order_(%d,_%d)' % (i, j))
     print(filename)
     mdl.export_as_lp(filename)
 
@@ -55,8 +48,7 @@ if __name__ == '__main__':
     lp_dir = f'data/tsp{parameters.n}/instances/tsp/train_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
-    filenames.extend(
-        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([num] * n)
 
     # validation instances
@@ -64,8 +56,7 @@ if __name__ == '__main__':
     lp_dir = f'data/tsp{parameters.n}/instances/tsp/valid_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
-    filenames.extend(
-        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([num] * n)
 
     # small transfer instances
@@ -74,8 +65,7 @@ if __name__ == '__main__':
     lp_dir = f'data/tsp{parameters.n}/instances/tsp/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
-    filenames.extend(
-        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([num] * n)
 
     # medium transfer instances
@@ -84,8 +74,7 @@ if __name__ == '__main__':
     lp_dir = f'data/tsp{parameters.n}/instances/tsp/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
-    filenames.extend(
-        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([num] * n)
 
     # big transfer instances
@@ -94,8 +83,7 @@ if __name__ == '__main__':
     lp_dir = f'data/tsp{parameters.n}/instances/tsp/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
-    filenames.extend(
-        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([num] * n)
 
     # test instances
@@ -104,8 +92,7 @@ if __name__ == '__main__':
     lp_dir = f'data/tsp{parameters.n}/instances/tsp/test_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
-    filenames.extend(
-        [os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([num] * n)
 
     # actually generate the instances

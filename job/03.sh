@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=imitation
+#SBATCH --job-name=imitation15
 
 #SBATCH --mail-user=<uniqname>@umich.edu
 
@@ -27,7 +27,7 @@ conda activate ecole
 
 cd /home/<uniqname>/Project/learn2branch/
 
-python 03_train_gnn_imitation.py -n 15 -m False -g 0
+python 03_train_gnn_imitation.py -n 15 -g 0
 
 /bin/hostname
 sleep 60
