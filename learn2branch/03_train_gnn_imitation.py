@@ -75,20 +75,23 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         '-g',
         '--gpu',
         help='CUDA GPU id (-1 for CPU).',
         type=int,
-        eardefault=0,
+        default=0,
     )
+
     parser.add_argument(
         '-n',
         '--num',
         help='tsp size.',
         type=int,
-        eardefault=15,
+        default=15,
     )
+
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
