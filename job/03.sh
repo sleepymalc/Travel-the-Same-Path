@@ -25,6 +25,9 @@
 source /home/<uniqname>/anaconda3/etc/profile.d/conda.sh
 conda activate ecole
 
+module load gcc/9.2.0
+module load cuda/11.5.1
+
 cd /home/<uniqname>/Project/learn2branch/
 
 python 03_train_gnn_imitation.py -n 15 -g 0
