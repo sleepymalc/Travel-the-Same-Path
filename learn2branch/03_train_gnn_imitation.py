@@ -82,6 +82,13 @@ if __name__ == "__main__":
         type=int,
         eardefault=0,
     )
+    parser.add_argument(
+        '-n',
+        '--num',
+        help='tsp size.',
+        type=int,
+        eardefault=15,
+    )
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
@@ -93,8 +100,9 @@ if __name__ == "__main__":
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
+    tsp_size = int(args.num)
 
-    problem_folder = f'tsp/{parameters.n}n'
+    problem_folder = f'tsp/{tsp_size}n'
     running_dir = f"model/tsp/{seed}"
     os.makedirs(running_dir, exist_ok=True)
 
@@ -140,13 +148,13 @@ if __name__ == "__main__":
                           verbose=True)
 
     train_files = [
-        str(file) for file in (pathlib.Path(f'data/samples') / problem_folder /
-                               'train').glob('sample_*.pkl')
+        str(file) for file in (pathlib.Path(f'tsp{tsp_size}_data/samples') /
+                               problem_folder / 'train').glob('sample_*.pkl')
     ]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
     valid_files = [
-        str(file) for file in (pathlib.Path(f'data/samples') / problem_folder /
-                               'valid').glob('sample_*.pkl')
+        str(file) for file in (pathlib.Path(f'tsp{tsp_size}_data/samples') /
+                               problem_folder / 'valid').glob('sample_*.pkl')
     ]
 
     pretrain_data = GraphDataset(pretrain_files)
