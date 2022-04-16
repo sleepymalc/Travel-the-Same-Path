@@ -2,6 +2,20 @@
 
 ## Setup
 
+### Install Anaconda
+
+We use `anaconda` to manage our environment. For people using Greatlakes, see the following. 
+
+Since we can't use `sudo`, hence we build `anaconda` from source. Download [`Anaconda3-2021.11-Linux-x86_64.sh`](https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh) and upload it to your Greatlakes server using either [gui for greatlakes](https://greatlakes.arc-ts.umich.edu/pun/sys/dashboard) or [globus](https://www.globus.org/). After doing so, just run 
+
+```bash
+sh Anaconda3-2021.11-Linux-x86_64.sh
+```
+
+in the folder you put this script in.
+
+### Create Virtual Environment
+
 We'll need `ecole`, `pytorch` and also `pytorch_geometric`. Please follow the following configuration to reproduce the result. 
 
 1. Create a environment
