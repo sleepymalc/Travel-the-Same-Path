@@ -88,28 +88,26 @@ if __name__ == "__main__":
     parser.add_argument(
         '-n',
         '--num',
-        help='tsp size.',
+        help='tsp size train on. -1 if mixed training',
         type=int,
         default=15,
     )
 
     parser.add_argument(
         '-l',
-        '--load',
-        help='load model from file (specify by path)',
-        type=str,
-        default='model/imitation/15',
-    )
-
-    parser.add_argument(
-        '-m',
-        '--mixedTraining',
-        help='mixed size training or not',
-        default=False,
-        type=bool,
+        '--load_n',
+        help=
+        'load model from file (specify by number of tsp size trained on). -1 if mixed trained model',
+        type=int,
+        default=15,
     )
 
     args = parser.parse_args()
+
+    if int(args.load_n) == -1:
+        load_model = f'model/imitation/mixed/train_params.pkl'
+    else:
+        load_model = f'model/imitation/{args.load_n}n/train_params.pkl'
 
     ### HYPER PARAMETERS ###
     max_epochs = 1000
@@ -122,7 +120,17 @@ if __name__ == "__main__":
     seed = parameters.seed
     tsp_size = int(args.num)
 
-    running_dir = f"model/reinforce/{tsp_size}n"
+    if tsp_size == -1:
+        if int(args.load_n) == -1:
+            running_dir = f"model/reinforce/mixed-mixed"
+        else:
+            running_dir = f"model/reinforce/{args.load_n}-mixed"
+    else:
+        if int(args.load_n) == -1:
+            running_dir = f"model/reinforce/mixed-{tsp_size}n"
+        else:
+            running_dir = f"model/reinforce/{args.load_n}-{tsp_size}n"
+
     os.makedirs(running_dir, exist_ok=True)
 
     ### PYTORCH SETUP ###
@@ -144,10 +152,7 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    if args.mixedTraining:
-        logfile = os.path.join(running_dir, f'train_{tsp_size}n_log.txt')
-    else:
-        logfile = os.path.join(running_dir, f'train_mixed_log.txt')
+    logfile = os.path.join(running_dir, f'train_log.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 
