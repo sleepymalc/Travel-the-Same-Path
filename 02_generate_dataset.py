@@ -301,10 +301,10 @@ if __name__ == '__main__':
     node_record_prob = parameters.node_record_prob
     time_limit = parameters.time_limit
 
-    instances_train = glob.glob(f'tsp{n}_data/instances/tsp/train_{n}n/*.lp')
-    instances_valid = glob.glob(f'tsp{n}_data/instances/tsp/valid_{n}n/*.lp')
-    instances_test = glob.glob(f'tsp{n}_data/instances/tsp/test_{n}n/*.lp')
-    out_dir = f'tsp{n}_data/samples/tsp/{n}n'
+    instances_train = glob.glob(f'data/tsp{n}/instances/train_{n}n/*.lp')
+    instances_valid = glob.glob(f'data/tsp{n}/instances/valid_{n}n/*.lp')
+    instances_test = glob.glob(f'data/tsp{n}/instances/test_{n}n/*.lp')
+    out_dir = f'data/tsp{n}/samples'
 
     print(f"{len(instances_train)} train instances for {train_size} samples")
     print(

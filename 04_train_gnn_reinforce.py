@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import pathlib
+import ecole
 import numpy as np
 import parameters
 
@@ -75,13 +76,31 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         '-g',
         '--gpu',
         help='CUDA GPU id (-1 for CPU).',
         type=int,
-        eardefault=0,
+        default=0,
     )
+
+    parser.add_argument(
+        '-n',
+        '--num',
+        help='tsp size.',
+        type=int,
+        default=15,
+    )
+
+    parser.add_argument(
+        '-m',
+        '--mixedTraining',
+        help='mixed size training or not',
+        default=False,
+        type=bool,
+    )
+
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
