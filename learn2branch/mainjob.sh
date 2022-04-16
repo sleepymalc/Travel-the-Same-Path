@@ -1,8 +1,9 @@
 #!/bin/bash
 
-#SBATCH --job-name=experiment
+#SBATCH --job-name=data_generation
 
-#SBATCH --mail-user=pbb@umich.edu
+#SBATCH --mail-user=<username>@umich.edu
+
 #SBATCH --mail-type=END,FAIL
 
 #SBATCH --partition=gpu
@@ -17,7 +18,7 @@
 
 #SBATCH --time=10-00:00:00
 
-#SBATCH --account=qmei3
+#SBATCH --account=<account>
 
 #SBATCH --output=/home/%u/logs/%x-%j.log
 

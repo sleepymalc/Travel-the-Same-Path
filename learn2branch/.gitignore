@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+tsp15_data
+tsp20_data
+tsp25_data
+tsp15_data.zip
+tsp20_data.zip
+tsp25_data.zip
