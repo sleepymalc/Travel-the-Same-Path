@@ -57,3 +57,45 @@ python -c 'import torch; print(torch.cuda.is_available())'
 ```
 
 You should see `True`. 
+
+## Running the Experiment
+
+### `01_generate_instances.py`
+
+
+
+### `02_generate_dataset.py`
+
+
+
+After running this, the data set should look like the following
+
+```bash
+---EECS545-Project
+ |
+ |---data
+ |     |
+ |     |-tsp15
+ |     |    |-instances
+ |     |    |   |-test_15n
+ |     |    |   |-train_15n
+ |     |    |   ...
+ |     |    |   
+ |     |    |-samples
+ |     |        |-test
+ |     |        |-train
+ |     |        |-valid
+ |     |-tsp20
+ |     |-tsp25
+ |
+ |--- ...
+ .
+ .
+ .
+```
+
+
+
+### `03_train_gnn_imitation.py`
+
+### `04_train_gnn_reinforce.py`

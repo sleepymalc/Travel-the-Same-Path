@@ -114,7 +114,7 @@ if __name__ == "__main__":
     tsp_size = int(args.num)
 
     problem_folder = f'tsp/{tsp_size}n'
-    running_dir = f"model/tsp/{seed}"
+    running_dir = f"model/imitation"
     os.makedirs(running_dir, exist_ok=True)
 
     ### PYTORCH SETUP ###
