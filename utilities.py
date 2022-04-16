@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 import torch_geometric
 
+
 def log(str, logfile=None):
     str = f'[{datetime.datetime.now()}] {str}'
     print(str)
@@ -18,14 +19,15 @@ def log(str, logfile=None):
 def pad_tensor(input_, pad_sizes, pad_value=-1e8):
     max_pad_size = pad_sizes.max()
     output = input_.split(pad_sizes.cpu().numpy().tolist())
-    output = torch.stack([F.pad(slice_, (0, max_pad_size-slice_.size(0)), 'constant', pad_value)
-                          for slice_ in output], dim=0)
+    output = torch.stack(
+        [F.pad(slice_, (0, max_pad_size - slice_.size(0)), 'constant', pad_value) for slice_ in output], dim=0)
     return output
 
 
 class BipartiteNodeData(torch_geometric.data.Data):
-    def __init__(self, constraint_features, edge_indices, edge_features, variable_features,
-                 candidates, nb_candidates, candidate_choice, candidate_scores):
+
+    def __init__(self, constraint_features, edge_indices, edge_features, variable_features, candidates, nb_candidates,
+                 candidate_choice, candidate_scores):
         super().__init__()
         self.constraint_features = constraint_features
         self.edge_index = edge_indices
@@ -46,6 +48,7 @@ class BipartiteNodeData(torch_geometric.data.Data):
 
 
 class GraphDataset(torch_geometric.data.Dataset):
+
     def __init__(self, sample_files):
         super().__init__(root=None, transform=None, pre_transform=None)
         self.sample_files = sample_files
@@ -69,20 +72,21 @@ class GraphDataset(torch_geometric.data.Dataset):
         candidate_choice = torch.where(candidates == sample_action)[0][0]  # action index relative to candidates
         candidate_scores = torch.FloatTensor([sample_scores[j] for j in candidates])
 
-        graph = BipartiteNodeData(constraint_features, edge_indices, edge_features, variable_features,
-                                  candidates, len(candidates), candidate_choice, candidate_scores)
-        graph.num_nodes = constraint_features.shape[0]+variable_features.shape[0]
+        graph = BipartiteNodeData(constraint_features, edge_indices, edge_features, variable_features, candidates,
+                                  len(candidates), candidate_choice, candidate_scores)
+        graph.num_nodes = constraint_features.shape[0] + variable_features.shape[0]
         return graph
 
 
 class Scheduler(torch.optim.lr_scheduler.ReduceLROnPlateau):
+
     def __init__(self, optimizer, **kwargs):
         super().__init__(optimizer, **kwargs)
 
     def step(self, metrics):
         # convert `metrics` to float, in case it's a zero-dim Tensor
         current = float(metrics)
-        self.last_epoch =+1
+        self.last_epoch = +1
 
         if self.is_better(current, self.best):
             self.best = current

@@ -13,8 +13,7 @@ def pretrain(policy, pretrain_loader):
     while True:
         for batch in pretrain_loader:
             batch.to(device)
-            if not policy.pre_train(batch.constraint_features,
-                                    batch.edge_index, batch.edge_attr,
+            if not policy.pre_train(batch.constraint_features, batch.edge_index, batch.edge_attr,
                                     batch.variable_features):
                 break
 
@@ -33,14 +32,10 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
     with torch.set_grad_enabled(optimizer is not None):
         for batch in data_loader:
             batch = batch.to(device)
-            logits = policy(batch.constraint_features, batch.edge_index,
-                            batch.edge_attr, batch.variable_features)
+            logits = policy(batch.constraint_features, batch.edge_index, batch.edge_attr, batch.variable_features)
             logits = pad_tensor(logits[batch.candidates], batch.nb_candidates)
-            cross_entropy_loss = F.cross_entropy(logits,
-                                                 batch.candidate_choices,
-                                                 reduction='mean')
-            entropy = (-F.softmax(logits, dim=-1) *
-                       F.log_softmax(logits, dim=-1)).sum(-1).mean()
+            cross_entropy_loss = F.cross_entropy(logits, batch.candidate_choices, reduction='mean')
+            entropy = (-F.softmax(logits, dim=-1) * F.log_softmax(logits, dim=-1)).sum(-1).mean()
             loss = cross_entropy_loss - entropy_bonus * entropy
 
             if optimizer is not None:
@@ -48,8 +43,7 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
                 loss.backward()
                 optimizer.step()
 
-            true_scores = pad_tensor(batch.candidate_scores,
-                                     batch.nb_candidates)
+            true_scores = pad_tensor(batch.candidate_scores, batch.nb_candidates)
             true_bestscore = true_scores.max(dim=-1, keepdims=True).values
 
             kacc = []
@@ -59,8 +53,7 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
                     continue
                 pred_top_k = logits.topk(k).indices
                 pred_top_k_true_scores = true_scores.gather(-1, pred_top_k)
-                accuracy = (pred_top_k_true_scores == true_bestscore).any(
-                    dim=-1).float().mean().item()
+                accuracy = (pred_top_k_true_scores == true_bestscore).any(dim=-1).float().mean().item()
                 kacc.append(accuracy)
             kacc = np.asarray(kacc)
             mean_loss += cross_entropy_loss.item() * batch.num_graphs
@@ -96,8 +89,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '-l',
         '--load_n',
-        help=
-        'load model from file (specify by number of tsp size trained on). -1 if mixed trained model',
+        help='load model from file (specify by number of tsp size trained on). -1 if mixed trained model',
         type=int,
         default=15,
     )
@@ -141,105 +133,14 @@ if __name__ == "__main__":
         os.environ['CUDA_VISIBLE_DEVICES'] = f'{args.gpu}'
         device = f"cuda:0"
 
-    import torch
-    import torch.nn.functional as F
-    import torch_geometric
-    from utilities import log, pad_tensor, GraphDataset, Scheduler
-    sys.path.insert(0, os.path.abspath(f'model'))
-    from model import GNNPolicy
+    env = ecole.environment.Branching(
+        reward_function=-1.5 * ecole.reward.LpIterations()**2,
+        observation_function=ecole.observation.NodeBipartite(),
+    )
 
-    rng = np.random.RandomState(seed)
-    torch.manual_seed(seed)
+    instances = ecole.instance.SetCoverGenerator(n_rows=100, n_cols=200)
 
-    ### LOG ###
-    logfile = os.path.join(running_dir, f'train_log.txt')
-    if os.path.exists(logfile):
-        os.remove(logfile)
-
-    log(f"max_epochs: {max_epochs}", logfile)
-    log(f"batch_size: {batch_size}", logfile)
-    log(f"pretrain_batch_size: {pretrain_batch_size}", logfile)
-    log(f"valid_batch_size : {valid_batch_size }", logfile)
-    log(f"lr: {lr}", logfile)
-    log(f"entropy bonus: {entropy_bonus}", logfile)
-    log(f"top_k: {top_k}", logfile)
-    log(f"gpu: {args.gpu}", logfile)
-    log(f"seed {seed}", logfile)
-
-    policy = GNNPolicy().to(device)
-    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
-    scheduler = Scheduler(optimizer,
-                          mode='min',
-                          patience=10,
-                          factor=0.2,
-                          verbose=True)
-
-    train_files = [
-        str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') /
-                               'train').glob('sample_*.pkl')
-    ]
-    pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
-    valid_files = [
-        str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') /
-                               'valid').glob('sample_*.pkl')
-    ]
-
-    pretrain_data = GraphDataset(pretrain_files)
-    pretrain_loader = torch_geometric.loader.DataLoader(pretrain_data,
-                                                        pretrain_batch_size,
-                                                        shuffle=False)
-    valid_data = GraphDataset(valid_files)
-    valid_loader = torch_geometric.loader.DataLoader(valid_data,
-                                                     valid_batch_size,
-                                                     shuffle=False)
-
-    for epoch in range(max_epochs + 1):
-        log(f"EPOCH {epoch}...", logfile)
-        if epoch == 0:
-            n = pretrain(policy, pretrain_loader)
-            log(f"PRETRAINED {n} LAYERS", logfile)
-        else:
-            epoch_train_files = rng.choice(train_files,
-                                           int(np.floor(10000 / batch_size)) *
-                                           batch_size,
-                                           replace=True)
-            train_data = GraphDataset(epoch_train_files)
-            train_loader = torch_geometric.data.DataLoader(train_data,
-                                                           batch_size,
-                                                           shuffle=True)
-            train_loss, train_kacc, entropy = process(policy, train_loader,
-                                                      top_k, optimizer)
-            log(
-                f"TRAIN LOSS: {train_loss:0.3f} " + "".join([
-                    f" acc@{k}: {acc:0.3f}"
-                    for k, acc in zip(top_k, train_kacc)
-                ]), logfile)
-
-        # TEST
-        valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k,
-                                                  None)
-        log(
-            f"VALID LOSS: {valid_loss:0.3f} " + "".join(
-                [f" acc@{k}: {acc:0.3f}"
-                 for k, acc in zip(top_k, valid_kacc)]), logfile)
-
-        scheduler.step(valid_loss)
-        if scheduler.num_bad_epochs == 0:
-            torch.save(policy.state_dict(),
-                       pathlib.Path(running_dir) / 'train_params.pkl')
-            log(f"  best model so far", logfile)
-        elif scheduler.num_bad_epochs == 10:
-            log(f"  10 epochs without improvement, decreasing learning rate",
-                logfile)
-        elif scheduler.num_bad_epochs == 20:
-            log(f"  20 epochs without improvement, early stopping", logfile)
-            break
-
-    policy.load_state_dict(
-        torch.load(pathlib.Path(running_dir) / 'train_params.pkl'))
-    valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k,
-                                              None)
-    log(
-        f"BEST VALID LOSS: {valid_loss:0.3f} " +
-        "".join([f" acc@{k}: {acc:0.3f}"
-                 for k, acc in zip(top_k, valid_kacc)]), logfile)
+    for _ in range(10):
+        observation, action_set, reward_offset, done, info = env.reset(next(instances))
+        while not done:
+            observation, action_set, reward, done, info = env.step(action_set[0])
