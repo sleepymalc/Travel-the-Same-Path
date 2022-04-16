@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=reinforce
 
-#SBATCH --mail-user=<username>@umich.edu
+#SBATCH --mail-user=<uniqname>@umich.edu
 
 #SBATCH --mail-type=END,FAIL
 
@@ -22,10 +22,10 @@
 
 #SBATCH --output=/home/%u/logs/%x-%j.log
 
-source /home/pbb/anaconda3/etc/profile.d/conda.sh
+source /home/<uniqname>/anaconda3/etc/profile.d/conda.sh
 conda activate ecole
 
-cd /home/pbb/Project/learn2branch/
+cd /home/<uniqname>/Project/learn2branch/
 
 python 04_train_gnn_reinforce.py -n 15 -m False -g 0
 
