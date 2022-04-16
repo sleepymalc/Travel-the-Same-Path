@@ -92,7 +92,7 @@ if __name__ == "__main__":
     batch_size = 32
     pretrain_batch_size = 128
     valid_batch_size = 128
-    lr = 1e-3
+    lr = 1e-4
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     log(f"seed {seed}", logfile)
 
     policy = GNNPolicy().to(device)
-    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(policy.parameters(), lr=lr)
     scheduler = Scheduler(optimizer, mode='min', patience=10, factor=0.2, verbose=True)
 
     train_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')]
@@ -176,9 +176,9 @@ if __name__ == "__main__":
             log(f"  best model so far", logfile)
         elif scheduler.num_bad_epochs == 10:
             log(f"  10 epochs without improvement, decreasing learning rate", logfile)
-        elif scheduler.num_bad_epochs == 20:
-            log(f"  20 epochs without improvement, early stopping", logfile)
-            break
+        # elif scheduler.num_bad_epochs == 20:
+        #     log(f"  20 epochs without improvement, early stopping", logfile)
+        #     break
 
     policy.load_state_dict(torch.load(pathlib.Path(running_dir) / 'train_params.pkl'))
     valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k, None)
