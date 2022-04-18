@@ -1,22 +1,20 @@
 #!/bin/bash
 
-#SBATCH --job-name=imit25-0.5
+#SBATCH --job-name=dataset20
 
 #SBATCH --mail-user=pbb@umich.edu
 
 #SBATCH --mail-type=END,FAIL
 
-#SBATCH --partition=gpu
+#SBATCH --partition=standard
 
 #SBATCH --nodes=1
 
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=8gb
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=16gb
 
-#SBATCH --gres=gpu:1
-
-#SBATCH --time=10-00:00:00
+#SBATCH --time=3-00:00:00
 
 #SBATCH --account=qmei3
 
@@ -25,12 +23,11 @@
 source /home/pbb/anaconda3/etc/profile.d/conda.sh
 conda activate gnn
 
-module load gcc/9.2.0
-module load cuda/11.5.1
-
 cd /home/pbb/Project/Test/
 
-python 03_train_gnn_imitation.py -n 25 -g 0 
+python 02_generate_dataset.py -j 20 -n 15
+python 02_generate_dataset.py -j 20 -n 20
+python 02_generate_dataset.py -j 20 -n 25
 
 /bin/hostname
 sleep 60
