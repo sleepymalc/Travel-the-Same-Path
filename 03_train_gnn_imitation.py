@@ -35,7 +35,10 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
             logits = pad_tensor(logits[batch.candidates], batch.nb_candidates)
             cross_entropy_loss = F.cross_entropy(logits, batch.candidate_choices, reduction='mean')
             entropy = (-F.softmax(logits, dim=-1) * F.log_softmax(logits, dim=-1)).sum(-1).mean()
-            loss = cross_entropy_loss - entropy_bonus * entropy
+            if not torch.isnan(cross_entropy_loss):
+                loss = cross_entropy_loss - entropy_bonus * entropy
+            else:
+                continue
 
             if optimizer is not None:
                 optimizer.zero_grad()
@@ -55,14 +58,16 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
                 accuracy = (pred_top_k_true_scores == true_bestscore).any(dim=-1).float().mean().item()
                 kacc.append(accuracy)
             kacc = np.asarray(kacc)
+
             mean_loss += cross_entropy_loss.item() * batch.num_graphs
             mean_entropy += entropy.item() * batch.num_graphs
             mean_kacc += kacc * batch.num_graphs
             n_samples_processed += batch.num_graphs
 
-    mean_loss /= n_samples_processed
-    mean_kacc /= n_samples_processed
-    mean_entropy /= n_samples_processed
+    if n_samples_processed > 0:
+        mean_loss /= n_samples_processed
+        mean_kacc /= n_samples_processed
+        mean_entropy /= n_samples_processed
     return mean_loss, mean_kacc, mean_entropy
 
 
@@ -85,6 +90,14 @@ if __name__ == "__main__":
         default=15,
     )
 
+    parser.add_argument(
+        '-p',
+        '--node_record_probability',
+        help='probability of recording node use for training',
+        type=float,
+        default=0.5,
+    )
+
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
@@ -92,11 +105,12 @@ if __name__ == "__main__":
     batch_size = 32
     pretrain_batch_size = 128
     valid_batch_size = 128
-    lr = 1e-4
+    lr = 1e-8
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
     tsp_size = int(args.num)
+    node_record_prob = float(args.node_record_probability)
 
     if tsp_size == -1:
         running_dir = f"model/imitation/mixed"
@@ -124,7 +138,7 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    logfile = os.path.join(running_dir, f'train_log.txt')
+    logfile = os.path.join(running_dir, f'train_log_{node_record_prob}p.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 
@@ -142,10 +156,16 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(policy.parameters(), lr=lr)
     scheduler = Scheduler(optimizer, mode='min', patience=10, factor=0.2, verbose=True)
 
-    train_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')]
+    train_files = [
+        str(file)
+        for file in (pathlib.Path(f'data_{node_record_prob}p/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')
+    ]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
-    valid_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')]
-
+    valid_files = [
+        str(file)
+        for file in (pathlib.Path(f'data_{node_record_prob}p/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')
+    ]
+    dataset_size = len(train_files)
     pretrain_data = GraphDataset(pretrain_files)
     pretrain_loader = torch_geometric.loader.DataLoader(pretrain_data, pretrain_batch_size, shuffle=False)
     valid_data = GraphDataset(valid_files)
@@ -157,9 +177,11 @@ if __name__ == "__main__":
             n = pretrain(policy, pretrain_loader)
             log(f"PRETRAINED {n} LAYERS", logfile)
         else:
-            epoch_train_files = rng.choice(train_files, int(np.floor(10000 / batch_size)) * batch_size, replace=True)
+            epoch_train_files = rng.choice(train_files,
+                                           int(np.floor(dataset_size / batch_size)) * batch_size,
+                                           replace=True)
             train_data = GraphDataset(epoch_train_files)
-            train_loader = torch_geometric.data.DataLoader(train_data, batch_size, shuffle=True)
+            train_loader = torch_geometric.loader.DataLoader(train_data, batch_size, shuffle=True)
             train_loss, train_kacc, entropy = process(policy, train_loader, top_k, optimizer)
             log(
                 f"TRAIN LOSS: {train_loss:0.3f} " +
@@ -172,7 +194,7 @@ if __name__ == "__main__":
 
         scheduler.step(valid_loss)
         if scheduler.num_bad_epochs == 0:
-            torch.save(policy.state_dict(), pathlib.Path(running_dir) / 'train_params.pkl')
+            torch.save(policy.state_dict(), pathlib.Path(running_dir) / f'train_params_{node_record_prob}p.pkl')
             log(f"  best model so far", logfile)
         elif scheduler.num_bad_epochs == 10:
             log(f"  10 epochs without improvement, decreasing learning rate", logfile)
@@ -180,7 +202,7 @@ if __name__ == "__main__":
         #     log(f"  20 epochs without improvement, early stopping", logfile)
         #     break
 
-    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / 'train_params.pkl'))
+    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params_{node_record_prob}p.pkl'))
     valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k, None)
     log(
         f"BEST VALID LOSS: {valid_loss:0.3f} " +

@@ -16,5 +16,4 @@ test_instance = 2000
 train_size = 100000
 valid_size = 20000
 test_size = 20000
-node_record_prob = 0.5
 time_limit = 3600

@@ -264,6 +264,13 @@ if __name__ == '__main__':
         default=1,
     )
     parser.add_argument(
+        '-p',
+        '--probability',
+        help='Node record probability',
+        type=float,
+        default=0.05,
+    )
+    parser.add_argument(
         '-n',
         '--nums',
         help='Number of nodes.',
@@ -278,13 +285,14 @@ if __name__ == '__main__':
     train_size = parameters.train_size
     valid_size = parameters.valid_size
     test_size = parameters.test_size
-    node_record_prob = parameters.node_record_prob
+    node_record_prob = float(args.probability)
+    print(node_record_prob)
     time_limit = parameters.time_limit
 
-    instances_train = glob.glob(f'data/tsp{n}/instances/train_{n}n/*.lp')
-    instances_valid = glob.glob(f'data/tsp{n}/instances/valid_{n}n/*.lp')
-    instances_test = glob.glob(f'data/tsp{n}/instances/test_{n}n/*.lp')
-    out_dir = f'data/tsp{n}/samples'
+    instances_train = glob.glob(f'data_0.5p/tsp{n}/instances/train_{n}n/*.lp')
+    instances_valid = glob.glob(f'data_0.5p/tsp{n}/instances/valid_{n}n/*.lp')
+    instances_test = glob.glob(f'data_0.5p/tsp{n}/instances/test_{n}n/*.lp')
+    out_dir = f'data_{node_record_prob}p/tsp{n}/samples'
 
     print(f"{len(instances_train)} train instances for {train_size} samples")
     print(f"{len(instances_valid)} validation instances for {valid_size} samples")
