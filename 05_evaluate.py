@@ -19,21 +19,22 @@ if __name__ == "__main__":
     parser.add_argument(
         '-n',
         '--num',
-        help='tsp size train on. -1 if mixed training',
+        help='tsp size test on.',
         type=int,
         default=15,
     )
     parser.add_argument(
         '-l',
-        '--load_n',
+        '--load',
         help=
-        'load model from file (specify by number of tsp size trained on). -1 if mixed trained model, 0 to train from scratch',
-        type=int,
+        'load model from file. <imitation size>n-<reinforcement size>n. -1 if mixed trained model, 0 if train from scratch',
+        type=str,
         default=15,
     )
 
     args = parser.parse_args()
     tsp_size = int(args.num)
+    imitation_size, reinforcement_size = int(args.load.split('-')[0][:-1]), int(args.load.split('-')[1][:-1])
 
     instances = [{
         'type': f'tsp{tsp_size}',
@@ -81,9 +82,10 @@ if __name__ == "__main__":
         } for i in range(parameters.transfer_instance)]
 
     ### HYPER PARAMETERS ###
+    max_epochs = 1000
     seed = parameters.seed
     internal_branchers = ['relpscost']
-    gnn_models = ['imitation']  # Can be supervised
+    gnn_models = ['supervised']  # Can be supervised
     time_limit = 3600
     branching_policies = []
 
@@ -101,7 +103,7 @@ if __name__ == "__main__":
             'name': model,
         })
 
-    print(f"tsp size: {args.load_n}-{tsp_size}")
+    print(f"tsp size: {args.load}")
     print(f"gpu: {args.gpu}")
     print(f"time limit: {time_limit} s")
 
@@ -124,19 +126,37 @@ if __name__ == "__main__":
             if policy['name'] not in loaded_models:
                 ### MODEL LOADING ###
                 model = GNNPolicy().to(device)
-                if policy['name'] == 'imitation':
-                    if int(args.load_n) == 0:
-                        model.load_state_dict(
-                            torch.load(f"model/imitation/{tsp_size}n/train_params.pkl", map_location=device))
-                    elif int(args.load_n) == -1:
+                if policy['name'] == 'supervised':
+                    if imitation_size == 0:
+                        if reinforcement_size == 0:
+                            raise Exception(f"{policy['name']} model not trained")
+                        elif reinforcement_size == -1:
+                            ## trained on mixed size tsp with reinforcement learning only
+                            pass
+                        else:
+                            ## trained on fixed size tsp with reinforcement learning only
+                            model.load_state_dict(
+                                torch.load(f"model/reinforce/{reinforcement_size}n/train_params.pkl",
+                                           map_location=device))
+                    elif imitation_size == -1:
                         pass
                     else:
-                        model.load_state_dict(
-                            torch.load(f"model/reinforce/{args.load_n}n-{tsp_size}n /train_params.pkl",
-                                       map_location=device))
+                        if reinforcement_size == 0:
+                            ## trained on fixed size tsp with imitation learning only
+                            model.load_state_dict(
+                                torch.load(f"model/imitation/{imitation_size}n/train_params.pkl", map_location=device))
+                        elif reinforcement_size == -1:
+                            ## trained on fixed size tsp with imitation learning, then mixed size reinforcement learning
+                            pass
+                        else:
+                            ## trained on fixed size tsp with imitation learning, then fixed size reinforcement learning
+                            model.load_state_dict(
+                                torch.load(f"model/imitation/{imitation_size}n-{reinforcement_size}n/train_params.pkl",
+                                           map_location=device))
                 else:
                     raise Exception(f"Unrecognized GNN policy {policy['name']}")
-                loaded_models[policy['name']] = model
+
+            loaded_models[policy['name']] = model
 
             policy['model'] = loaded_models[policy['name']]
 
@@ -164,7 +184,7 @@ if __name__ == "__main__":
         'branching/vanillafullstrong/idempotent': True
     }
 
-    result_file = f"{args.load_n}-{tsp_size}_{time.strftime('%Y%m%d-%H%M%S')}.csv"
+    result_file = f"{args.load}_{time.strftime('%m%d-%H%M')}.csv"
     with open(f"results/{result_file}", 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
