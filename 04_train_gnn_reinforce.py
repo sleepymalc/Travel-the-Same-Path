@@ -34,13 +34,6 @@ if __name__ == "__main__":
         type=int,
         default=15,
     )
-    parser.add_argument(
-        '-p',
-        '--node_record_probability',
-        help='probability of recording node use for training',
-        type=float,
-        default=0.5,
-    )
 
     args = parser.parse_args()
 
@@ -55,7 +48,6 @@ if __name__ == "__main__":
     lr = 1e-4
     seed = parameters.seed + 4
     tsp_size = int(args.num)
-    node_record_prob = float(args.node_record_probability)
 
     if tsp_size == -1:
         if int(args.load_n) == -1:

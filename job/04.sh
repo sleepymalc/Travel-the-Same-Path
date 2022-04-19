@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=reinforce
+#SBATCH --job-name=rein15
 
-#SBATCH --mail-user=<uniqname>@umich.edu
+#SBATCH --mail-user=pbb@umich.edu
 
 #SBATCH --mail-type=END,FAIL
 
@@ -11,21 +11,24 @@
 #SBATCH --nodes=1
 
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=16gb
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=8gb
 
 #SBATCH --gres=gpu:1
 
-#SBATCH --time=10-00:00:00
+#SBATCH --time=2-00:00:00
 
-#SBATCH --account=<account>
+#SBATCH --account=qmei3
 
 #SBATCH --output=/home/%u/logs/%x-%j.log
 
-source /home/<uniqname>/anaconda3/etc/profile.d/conda.sh
-conda activate ecole
+source /home/pbb/anaconda3/etc/profile.d/conda.sh
+conda activate gnn
 
-cd /home/<uniqname>/Project/learn2branch/
+module load gcc/9.2.0
+module load cuda/11.5.1
+
+cd /home/pbb/Project/Test/
 
 python 04_train_gnn_reinforce.py -n 15 -m False -g 0
 

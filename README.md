@@ -56,7 +56,13 @@ To check whether your environment is working correctly, we test it as follows.
 python -c 'import torch; print(torch.cuda.is_available())'
 ```
 
-You should see `True`. 
+You should see `True` if you are in interactive mode with gpu resource. If you don't, then you'll probably see `False`, whcih is also fine. Just make sure you have test this at least once in interactive mode with gpu resource, which can be done by 
+
+```bash
+salloc --partition=gpu --gres=gpu:1 --cpus-per-task=8 --mem-per-cpu=16gb --account=<account> --time=1-00:00:00
+```
+
+for example.
 
 ## Running the Experiment
 
