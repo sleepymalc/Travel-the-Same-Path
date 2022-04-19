@@ -90,14 +90,6 @@ if __name__ == "__main__":
         default=15,
     )
 
-    parser.add_argument(
-        '-p',
-        '--node_record_probability',
-        help='probability of recording node use for training',
-        type=float,
-        default=0.5,
-    )
-
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
@@ -110,7 +102,6 @@ if __name__ == "__main__":
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
     tsp_size = int(args.num)
-    node_record_prob = float(args.node_record_probability)
 
     if tsp_size == -1:
         running_dir = f"model/imitation/mixed"
@@ -156,15 +147,9 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(policy.parameters(), lr=lr)
     scheduler = Scheduler(optimizer, mode='min', patience=10, factor=0.2, verbose=True)
 
-    train_files = [
-        str(file)
-        for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')
-    ]
+    train_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
-    valid_files = [
-        str(file)
-        for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')
-    ]
+    valid_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')]
     dataset_size = len(train_files)
     pretrain_data = GraphDataset(pretrain_files)
     pretrain_loader = torch_geometric.loader.DataLoader(pretrain_data, pretrain_batch_size, shuffle=False)

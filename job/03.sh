@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=imit20-0.5
+#SBATCH --job-name=imit20
 
 #SBATCH --mail-user=pbb@umich.edu
 
