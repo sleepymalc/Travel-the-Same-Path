@@ -5,7 +5,6 @@ import pathlib
 import ecole
 import numpy as np
 import parameters
-import skopt
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -44,9 +43,9 @@ if __name__ == "__main__":
 
     ### HYPER PARAMETERS ###
     max_epochs = 100000
-    optim_n_burnins = 100
     lr = 1e-4
-    seed = parameters.seed + 4
+    entropy_bonus = 0.0
+    seed = parameters.seed
     tsp_size = int(args.num)
 
     if tsp_size == -1:
@@ -55,14 +54,14 @@ if __name__ == "__main__":
         elif int(args.load_n) == 0:
             running_dir = f"model/reinforce/{tsp_size}n"
         else:
-            running_dir = f"model/reinforce/{args.load_n}-mixed"
+            running_dir = f"model/reinforce/{args.load_n}n-mixed"
     else:
         if int(args.load_n) == -1:
             running_dir = f"model/reinforce/mixed-{tsp_size}n"
         elif int(args.load_n) == 0:
             running_dir = f"model/reinforce/{tsp_size}n"
         else:
-            running_dir = f"model/reinforce/{args.load_n}-{tsp_size}n"
+            running_dir = f"model/reinforce/{args.load_n}n-{tsp_size}n"
 
     os.makedirs(running_dir, exist_ok=True)
 
@@ -80,7 +79,7 @@ if __name__ == "__main__":
     )
 
     import torch
-    from utilities import log, Scheduler
+    from utilities import log
     sys.path.insert(0, os.path.abspath(f'model'))
     from model import GNNPolicy
 
@@ -88,8 +87,8 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    import datetime
-    timestampstr = datetime.datetime.now().strftime('%H_%M_%d_%m')
+    import time
+    timestampstr = time.strftime('%m%d-%H%M')
     logfile = os.path.join(running_dir, f'train_log_{timestampstr}.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
@@ -99,40 +98,39 @@ if __name__ == "__main__":
     log(f"gpu: {args.gpu}", logfile)
     log(f"seed {seed}", logfile)
 
-    env = ecole.environment.Configuring(
-        # set up a few SCIP parameters
+    train_env = ecole.environment.Configuring(
         scip_params={
-            "branching/scorefunc": "s",  # sum score function
-            "branching/vanillafullstrong/priority": 666666,  # use vanillafullstrong (highest priority)
-            "presolving/maxrounds": 0,  # deactivate presolving
+            'separating/maxrounds': 0,
+            'presolving/maxrestarts': 0,
+            'limits/time': 3600,
+            'timing/clocktype': 1,
+            'branching/vanillafullstrong/idempotent': True
         },
-        # pure bandit, no observation
-        observation_function=None,
-
-        # minimize the total number of nodes
+        observation_function=ecole.observation.NodeBipartite(),
         reward_function=-ecole.reward.LpIterations(),
-
-        # collect additional metrics for information purposes
         information_function={
-            "nnodes": ecole.reward.NNodes().cumsum(),
+            "nb_nodes": ecole.reward.NNodes().cumsum(),
             "lpiters": ecole.reward.LpIterations().cumsum(),
             "time": ecole.reward.SolvingTime().cumsum(),
         },
     )
 
-    policy = GNNPolicy().to(device)
-    # set up the optimizer
-    optimizer = skopt.Optimizer(
-        dimensions=[(0.0, 1.0)],
-        base_estimator="GP",
-        n_initial_points=optim_n_burnins,
-        random_state=rng,
-        acq_func="PI",
-        acq_optimizer="sampling",
-        acq_optimizer_kwargs={"n_points": 10},
+    valid_env = ecole.environment.Configuring(
+        observation_function=None,
+        information_function={
+            "nb_nodes": ecole.reward.NNodes(),
+            "time": ecole.reward.SolvingTime(),
+        },
+        scip_params={
+            "separating/maxrounds": 0,
+            "presolving/maxrestarts": 0,
+            "limits/time": 3600,
+        },
     )
 
-    assert max_epochs > optim_n_burnins
+    policy = GNNPolicy().to(device)
+    policy.load_state_dict(torch.load(load_model, map_location=device))
+    optimizer = torch.optim.Adam(policy.parameters(), lr=lr)
 
     train_instances = [
         str(file)
@@ -143,48 +141,45 @@ if __name__ == "__main__":
         for file in (pathlib.Path(f'data/tsp{tsp_size}/instances') / f'valid_{tsp_size}n').glob('instance_*.lp')
     ]
 
-    dataset_size = len(train_instances)
-    avg_lp_iters = 0
     for epoch in range(max_epochs + 1):
         log(f"EPOCH {epoch}...", logfile)
 
         instance = rng.choice(train_instances, size=1, replace=True)[0]
-        env.reset(instance)
 
-        # get the next action from the optimizer
-        x = optimizer.ask()
-        action = {"branching/scorefac": x[0]}
+        # Run the GNN brancher
+        observation, action_set, loss, done, info = train_env.reset(instance)
+        print(observation)
+        print(action_set)
+        print(loss)
+        print(done)
+        print(info)
+        while not done:
+            with torch.no_grad():
+                observation = (
+                    torch.from_numpy(observation.row_features.astype(np.float32)).to(device),
+                    torch.from_numpy(observation.edge_features.indices.astype(np.int64)).to(device),
+                    torch.from_numpy(observation.edge_features.values.astype(np.float32)).view(-1, 1).to(device),
+                    torch.from_numpy(observation.variable_features.astype(np.float32)).to(device),
+                )
+                logits = policy(*observation)
+                action = action_set[logits[action_set.astype(np.int64)].argmax()]
+                observation, action_set, reward, done, info = train_env.step(action)
+                loss += reward
 
-        # apply the action and collect the reward
-        observation, action_set, reward, done, info = env.step(action)
-
-        # update the optimizer
-        optimizer.tell(x, -reward)  # minimize the negated reward (eq. maximize the reward)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
         log(
-            f'TRAIN LOSS: {-reward:0.3f} ' + f'LP Iter: {info["lpiters"]} ' + f'time: {info["time"]:0.3f} ' +
-            f'nnodes: {info["nnodes"]}', logfile)
+            f'TRAIN LOSS: {-loss:0.3f} ' + f"LP Iter: {info['lpiters']} " + f'time: {info["time"]:0.3f} ' +
+            f'nb_nodes: {info["nb_nodes"]}', logfile)
 
         # TEST
-        instance = rng.choice(train_instances, size=1, replace=True)[0]
-        env.reset(instance)
+        valid_env.reset(instance)
+        _, _, _, reward, valid_info = valid_env.step({})
 
-        # get the next action from the optimizer
-        x = optimizer.ask()
-        action = {"branching/scorefac": x[0]}
-
-        # apply the action and collect the reward
-        _, _, reward, _, info = env.step(action)
         log(
-            f'VALID LOSS: {-reward:0.3f} ' + f'LP Iter: {info["lpiters"]} ' + f'time: {info["time"]:0.3f} ' +
-            f'nnodes: {info["nnodes"]}', logfile)
+            f'VALID LOSS: {reward:0.3f} ' + f'LP Iter: {valid_info["lpiters"]} ' + f'time: {valid_info["time"]:0.3f} ' +
+            f'nb_nodes: {valid_info["nb_nodes"]}', logfile)
 
     torch.save(policy.state_dict(), pathlib.Path(running_dir) / f'train_params_{timestampstr}.pkl')
-    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params_{timestampstr}.pkl'))
-    instance = rng.choice(train_instances, size=1, replace=True)[0]
-    env.reset(instance)
-    x = optimizer.ask()
-    _, _, reward, _, info = env.step({"branching/scorefac": x[0]})
-    log(
-        f'VALID LOSS: {-reward:0.3f} ' + f'LP Iter: {info["lpiters"]} ' + f'time: {info["time"]:0.3f} ' +
-        f'nnodes: {info["nnodes"]}', logfile)
