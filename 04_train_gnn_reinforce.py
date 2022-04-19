@@ -43,8 +43,8 @@ if __name__ == "__main__":
         load_model = f'model/imitation/{args.load_n}n/train_params.pkl'
 
     ### HYPER PARAMETERS ###
-    max_epochs = 10000
-    optim_n_burnins = 10
+    max_epochs = 100000
+    optim_n_burnins = 100
     lr = 1e-4
     seed = parameters.seed + 4
     tsp_size = int(args.num)
@@ -88,7 +88,9 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    logfile = os.path.join(running_dir, f'train_log.txt')
+    import datetime
+    timestampstr = datetime.datetime.now().strftime('%H_%M_%d_%m')
+    logfile = os.path.join(running_dir, f'train_log_{timestampstr}.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 
@@ -108,7 +110,7 @@ if __name__ == "__main__":
         observation_function=None,
 
         # minimize the total number of nodes
-        reward_function=ecole.reward.LpIterations(),
+        reward_function=-ecole.reward.LpIterations(),
 
         # collect additional metrics for information purposes
         information_function={
@@ -142,9 +144,7 @@ if __name__ == "__main__":
     ]
 
     dataset_size = len(train_instances)
-    import math
-    best_loss = -math.inf
-
+    avg_lp_iters = 0
     for epoch in range(max_epochs + 1):
         log(f"EPOCH {epoch}...", logfile)
 
@@ -156,15 +156,17 @@ if __name__ == "__main__":
         action = {"branching/scorefac": x[0]}
 
         # apply the action and collect the reward
-        _, _, reward, _, _ = env.step(action)
+        observation, action_set, reward, done, info = env.step(action)
 
         # update the optimizer
         optimizer.tell(x, -reward)  # minimize the negated reward (eq. maximize the reward)
 
-        log(f"TRAIN LOSS: {-reward:0.3f} ", logfile)
+        log(
+            f'TRAIN LOSS: {-reward:0.3f} ' + f'LP Iter: {info["lpiters"]} ' + f'time: {info["time"]:0.3f} ' +
+            f'nnodes: {info["nnodes"]}', logfile)
 
         # TEST
-        instance = rng.choice(train_instances, replace=True)
+        instance = rng.choice(train_instances, size=1, replace=True)[0]
         env.reset(instance)
 
         # get the next action from the optimizer
@@ -172,17 +174,17 @@ if __name__ == "__main__":
         action = {"branching/scorefac": x[0]}
 
         # apply the action and collect the reward
-        _, _, reward, _, _ = env.step(action)
-        log(f"TRAIN LOSS: {-reward:0.3f} ", logfile)
+        _, _, reward, _, info = env.step(action)
+        log(
+            f'VALID LOSS: {-reward:0.3f} ' + f'LP Iter: {info["lpiters"]} ' + f'time: {info["time"]:0.3f} ' +
+            f'nnodes: {info["nnodes"]}', logfile)
 
-        if best_loss < -reward:
-            torch.save(policy.state_dict(), pathlib.Path(running_dir) / 'train_params.pkl')
-            log(f"  best model so far", logfile)
-            best_loss = -reward
-
-    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params.pkl'))
-    instance = rng.choice(train_instances, replace=True)
+    torch.save(policy.state_dict(), pathlib.Path(running_dir) / f'train_params_{timestampstr}.pkl')
+    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params_{timestampstr}.pkl'))
+    instance = rng.choice(train_instances, size=1, replace=True)[0]
     env.reset(instance)
     x = optimizer.ask()
-    _, _, reward, _, _ = env.step({"branching/scorefac": x[0]})
-    log(f"TRAIN LOSS: {-reward:0.3f} ", logfile)
+    _, _, reward, _, info = env.step({"branching/scorefac": x[0]})
+    log(
+        f'VALID LOSS: {-reward:0.3f} ' + f'LP Iter: {info["lpiters"]} ' + f'time: {info["time"]:0.3f} ' +
+        f'nnodes: {info["nnodes"]}', logfile)
