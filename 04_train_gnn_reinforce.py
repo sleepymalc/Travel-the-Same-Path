@@ -98,7 +98,7 @@ if __name__ == "__main__":
     log(f"gpu: {args.gpu}", logfile)
     log(f"seed {seed}", logfile)
 
-    train_env = ecole.environment.Configuring(
+    train_env = ecole.environment.Branching(
         scip_params={
             'separating/maxrounds': 0,
             'presolving/maxrestarts': 0,
