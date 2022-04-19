@@ -80,9 +80,7 @@ if __name__ == "__main__":
     )
 
     import torch
-    import torch.nn.functional as F
-    import torch_geometric
-    from utilities import log, pad_tensor, GraphDataset, Scheduler
+    from utilities import log, Scheduler
     sys.path.insert(0, os.path.abspath(f'model'))
     from model import GNNPolicy
 
@@ -96,7 +94,6 @@ if __name__ == "__main__":
 
     log(f"max_epochs: {max_epochs}", logfile)
     log(f"lr: {lr}", logfile)
-    log(f"top_k: {top_k}", logfile)
     log(f"gpu: {args.gpu}", logfile)
     log(f"seed {seed}", logfile)
 
