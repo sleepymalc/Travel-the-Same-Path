@@ -6,55 +6,85 @@ import csv
 import numpy as np
 import time
 import pickle
-
+import parameters
 import ecole
 import pyscipopt
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'problem',
-        help='MILP instance type to process.',
-        choices=['setcover', 'cauctions', 'facilities', 'indset'],
-    )
-    parser.add_argument(
-        '-g', '--gpu',
+        '-g',
+        '--gpu',
         help='CUDA GPU id (-1 for CPU).',
         type=int,
         default=0,
     )
+    parser.add_argument(
+        '-n',
+        '--num',
+        help='tsp size train on. -1 if mixed training',
+        type=int,
+        default=15,
+    )
+    parser.add_argument(
+        '-l',
+        '--load_n',
+        help=
+        'load model from file (specify by number of tsp size trained on). -1 if mixed trained model, 0 to train from scratch',
+        type=int,
+        default=15,
+    )
+
     args = parser.parse_args()
+    tsp_size = int(args.num)
 
     result_file = f"{args.problem}_{time.strftime('%Y%m%d-%H%M%S')}.csv"
     instances = []
-    seeds = [0]
+    seeds = parameters.seed
+
     internal_branchers = ['relpscost']
-    gnn_models = ['supervised'] # Can be supervised
+    gnn_models = ['supervised']  # Can be supervised
     time_limit = 3600
 
-    if args.problem == 'setcover':
-        instances += [{'type': 'small', 'path': f"data/instances/setcover/transfer_500r_1000c_0.05d/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'medium', 'path': f"data/instances/setcover/transfer_1000r_1000c_0.05d/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'big', 'path': f"data/instances/setcover/transfer_2000r_1000c_0.05d/instance_{i+1}.lp"} for i in range(20)]
-
-    elif args.problem == 'cauctions':
-        instances += [{'type': 'small', 'path': f"data/instances/cauctions/transfer_100_500/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'medium', 'path': f"data/instances/cauctions/transfer_200_1000/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'big', 'path': f"data/instances/cauctions/transfer_300_1500/instance_{i+1}.lp"} for i in range(20)]
-
-    elif args.problem == 'facilities':
-        instances += [{'type': 'small', 'path': f"data/instances/facilities/transfer_100_100_5/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'medium', 'path': f"data/instances/facilities/transfer_200_100_5/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'big', 'path': f"data/instances/facilities/transfer_400_100_5/instance_{i+1}.lp"} for i in range(20)]
-
-    elif args.problem == 'indset':
-        instances += [{'type': 'small', 'path': f"data/instances/indset/transfer_500_4/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'medium', 'path': f"data/instances/indset/transfer_1000_4/instance_{i+1}.lp"} for i in range(20)]
-        instances += [{'type': 'big', 'path': f"data/instances/indset/transfer_1500_4/instance_{i+1}.lp"} for i in range(20)]
-
-    else:
-        raise NotImplementedError
+    if tsp_size == 15:
+        instances += [{
+            'type': 'small',
+            'path': f"data/tsp15/instances/test_7n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+        instances += [{
+            'type': 'medium',
+            'path': f"data/tsp15/instances/test_10n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+        instances += [{
+            'type': 'big',
+            'path': f"data/tsp15/instances/test_30n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+    elif tsp_size == 20:
+        instances += [{
+            'type': 'small',
+            'path': f"data/tsp20/instances/test_10n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+        instances += [{
+            'type': 'medium',
+            'path': f"data/tsp20/instances/test_13n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+        instances += [{
+            'type': 'big',
+            'path': f"data/tsp20/instances/test_40n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+    elif tsp_size == 25:
+        instances += [{
+            'type': 'small',
+            'path': f"data/tsp25/instances/test_12n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+        instances += [{
+            'type': 'medium',
+            'path': f"data/tsp25/instances/test_16n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
+        instances += [{
+            'type': 'big',
+            'path': f"data/tsp25/instances/test_50n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)]
 
     branching_policies = []
 
@@ -62,10 +92,10 @@ if __name__ == "__main__":
     for brancher in internal_branchers:
         for seed in seeds:
             branching_policies.append({
-                    'type': 'internal',
-                    'name': brancher,
-                    'seed': seed,
-             })
+                'type': 'internal',
+                'name': brancher,
+                'seed': seed,
+            })
     # GNN models
     for model in gnn_models:
         for seed in seeds:
@@ -75,7 +105,7 @@ if __name__ == "__main__":
                 'seed': seed,
             })
 
-    print(f"problem: {args.problem}")
+    print(f"tsp size: {args.load_n}-{tsp_size}")
     print(f"gpu: {args.gpu}")
     print(f"time limit: {time_limit} s")
 
@@ -88,7 +118,7 @@ if __name__ == "__main__":
         device = f"cuda:0"
 
     import torch
-    from model.model import GNNPolicy
+    from model import GNNPolicy
 
     # load and assign tensorflow models to policies (share models and update parameters)
     loaded_models = {}
@@ -122,8 +152,13 @@ if __name__ == "__main__":
         'proctime',
     ]
     os.makedirs('results', exist_ok=True)
-    scip_parameters = {'separating/maxrounds': 0, 'presolving/maxrestarts': 0, 'limits/time': time_limit,
-                       'timing/clocktype': 1, 'branching/vanillafullstrong/idempotent': True}
+    scip_parameters = {
+        'separating/maxrounds': 0,
+        'presolving/maxrestarts': 0,
+        'limits/time': time_limit,
+        'timing/clocktype': 1,
+        'branching/vanillafullstrong/idempotent': True
+    }
 
     with open(f"results/{result_file}", 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -135,8 +170,9 @@ if __name__ == "__main__":
             for policy in branching_policies:
                 if policy['type'] == 'internal':
                     # Run SCIP's default brancher
-                    env = ecole.environment.Configuring(scip_params={**scip_parameters,
-                                                        f"branching/{policy['name']}/priority": 9999999})
+                    env = ecole.environment.Configuring(scip_params={
+                        **scip_parameters, f"branching/{policy['name']}/priority": 9999999
+                    })
                     env.seed(policy['seed'])
 
                     walltime = time.perf_counter()
@@ -162,8 +198,10 @@ if __name__ == "__main__":
                     while not done:
                         with torch.no_grad():
                             observation = (torch.from_numpy(observation.row_features.astype(np.float32)).to(device),
-                                           torch.from_numpy(observation.edge_features.indices.astype(np.int64)).to(device),
-                                           torch.from_numpy(observation.edge_features.values.astype(np.float32)).view(-1, 1).to(device),
+                                           torch.from_numpy(observation.edge_features.indices.astype(
+                                               np.int64)).to(device),
+                                           torch.from_numpy(observation.edge_features.values.astype(np.float32)).view(
+                                               -1, 1).to(device),
                                            torch.from_numpy(observation.column_features.astype(np.float32)).to(device))
 
                             logits = policy['model'](*observation)
@@ -195,4 +233,6 @@ if __name__ == "__main__":
                 })
                 csvfile.flush()
 
-                print(f"  {policy['type']}:{policy['name']} {policy['seed']} - {nnodes} nodes {nlps} lps {stime:.2f} ({walltime:.2f} wall {proctime:.2f} proc) s. {status}")
+                print(
+                    f"  {policy['type']}:{policy['name']} {policy['seed']} - {nnodes} nodes {nlps} lps {stime:.2f} ({walltime:.2f} wall {proctime:.2f} proc) s. {status}"
+                )
