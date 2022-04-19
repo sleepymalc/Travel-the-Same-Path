@@ -105,7 +105,7 @@ if __name__ == "__main__":
     batch_size = 32
     pretrain_batch_size = 128
     valid_batch_size = 128
-    lr = 1e-8
+    lr = 1e-5
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     torch.manual_seed(seed)
 
     ### LOG ###
-    logfile = os.path.join(running_dir, f'train_log_{node_record_prob}p.txt')
+    logfile = os.path.join(running_dir, f'train_log.txt')
     if os.path.exists(logfile):
         os.remove(logfile)
 
@@ -158,12 +158,12 @@ if __name__ == "__main__":
 
     train_files = [
         str(file)
-        for file in (pathlib.Path(f'data_{node_record_prob}p/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')
+        for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')
     ]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
     valid_files = [
         str(file)
-        for file in (pathlib.Path(f'data_{node_record_prob}p/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')
+        for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')
     ]
     dataset_size = len(train_files)
     pretrain_data = GraphDataset(pretrain_files)
@@ -194,7 +194,7 @@ if __name__ == "__main__":
 
         scheduler.step(valid_loss)
         if scheduler.num_bad_epochs == 0:
-            torch.save(policy.state_dict(), pathlib.Path(running_dir) / f'train_params_{node_record_prob}p.pkl')
+            torch.save(policy.state_dict(), pathlib.Path(running_dir) / f'train_params.pkl')
             log(f"  best model so far", logfile)
         elif scheduler.num_bad_epochs == 10:
             log(f"  10 epochs without improvement, decreasing learning rate", logfile)
@@ -202,7 +202,7 @@ if __name__ == "__main__":
         #     log(f"  20 epochs without improvement, early stopping", logfile)
         #     break
 
-    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params_{node_record_prob}p.pkl'))
+    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params.pkl'))
     valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k, None)
     log(
         f"BEST VALID LOSS: {valid_loss:0.3f} " +
