@@ -131,23 +131,24 @@ if __name__ == "__main__":
     )
 
     assert max_epochs > optim_n_burnins
-    scheduler = Scheduler(optimizer, mode='min', patience=10, factor=0.2, verbose=True)
 
     train_instances = [
         str(file)
-        for file in (pathlib.Path(f'data/tsp{tsp_size}/instance') / f'train_{tsp_size}n').glob('instance_*.lp')
+        for file in (pathlib.Path(f'data/tsp{tsp_size}/instances') / f'train_{tsp_size}n').glob('instance_*.lp')
     ]
     valid_instances = [
         str(file)
-        for file in (pathlib.Path(f'data/tsp{tsp_size}/instance') / f'valid_{tsp_size}n').glob('instance_*.lp')
+        for file in (pathlib.Path(f'data/tsp{tsp_size}/instances') / f'valid_{tsp_size}n').glob('instance_*.lp')
     ]
 
     dataset_size = len(train_instances)
+    import math
+    best_loss = -math.inf
 
     for epoch in range(max_epochs + 1):
         log(f"EPOCH {epoch}...", logfile)
 
-        instance = rng.choice(train_instances, replace=True)
+        instance = rng.choice(train_instances, size=1, replace=True)[0]
         env.reset(instance)
 
         # get the next action from the optimizer
@@ -174,12 +175,10 @@ if __name__ == "__main__":
         _, _, reward, _, _ = env.step(action)
         log(f"TRAIN LOSS: {-reward:0.3f} ", logfile)
 
-        scheduler.step(-reward)
-        if scheduler.num_bad_epochs == 0:
+        if best_loss < -reward:
             torch.save(policy.state_dict(), pathlib.Path(running_dir) / 'train_params.pkl')
             log(f"  best model so far", logfile)
-        elif scheduler.num_bad_epochs == 10:
-            log(f"  10 epochs without improvement, decreasing learning rate", logfile)
+            best_loss = -reward
 
     policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params.pkl'))
     instance = rng.choice(train_instances, replace=True)
