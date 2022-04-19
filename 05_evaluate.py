@@ -1,11 +1,8 @@
 import os
-import sys
-import importlib
 import argparse
 import csv
 import numpy as np
 import time
-import pickle
 import parameters
 import ecole
 import pyscipopt
@@ -38,72 +35,71 @@ if __name__ == "__main__":
     args = parser.parse_args()
     tsp_size = int(args.num)
 
-    result_file = f"{args.problem}_{time.strftime('%Y%m%d-%H%M%S')}.csv"
-    instances = []
-    seeds = parameters.seed
-
-    internal_branchers = ['relpscost']
-    gnn_models = ['supervised']  # Can be supervised
-    time_limit = 3600
+    instances = [{
+        'type': f'tsp{tsp_size}',
+        'path': f"data/tsp{tsp_size}/instances/test_{tsp_size}n/instance_{i+1}.lp"
+    } for i in range(parameters.test_instance)]
 
     if tsp_size == 15:
         instances += [{
-            'type': 'small',
+            'type': 'transfer-small',
             'path': f"data/tsp15/instances/test_7n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
         instances += [{
-            'type': 'medium',
+            'type': 'transfer-medium',
             'path': f"data/tsp15/instances/test_10n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
         instances += [{
-            'type': 'big',
+            'type': 'transfer-big',
             'path': f"data/tsp15/instances/test_30n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
     elif tsp_size == 20:
         instances += [{
-            'type': 'small',
+            'type': 'transfer-small',
             'path': f"data/tsp20/instances/test_10n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
         instances += [{
-            'type': 'medium',
+            'type': 'transfer-medium',
             'path': f"data/tsp20/instances/test_13n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
         instances += [{
-            'type': 'big',
+            'type': 'transfer-big',
             'path': f"data/tsp20/instances/test_40n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
     elif tsp_size == 25:
         instances += [{
-            'type': 'small',
+            'type': 'transfer-small',
             'path': f"data/tsp25/instances/test_12n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
         instances += [{
-            'type': 'medium',
+            'type': 'transfer-medium',
             'path': f"data/tsp25/instances/test_16n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
         instances += [{
-            'type': 'big',
+            'type': 'transfer-big',
             'path': f"data/tsp25/instances/test_50n/instance_{i+1}.lp"
         } for i in range(parameters.transfer_instance)]
 
+    ### HYPER PARAMETERS ###
+    seed = parameters.seed
+    internal_branchers = ['relpscost']
+    gnn_models = ['imitation']  # Can be supervised
+    time_limit = 3600
     branching_policies = []
 
     # SCIP internal brancher baselines
     for brancher in internal_branchers:
-        for seed in seeds:
-            branching_policies.append({
-                'type': 'internal',
-                'name': brancher,
-                'seed': seed,
-            })
+        branching_policies.append({
+            'type': 'internal',
+            'name': brancher,
+        })
+
     # GNN models
     for model in gnn_models:
-        for seed in seeds:
-            branching_policies.append({
-                'type': 'gnn',
-                'name': model,
-                'seed': seed,
-            })
+        branching_policies.append({
+            'type': 'gnn',
+            'name': model,
+        })
 
     print(f"tsp size: {args.load_n}-{tsp_size}")
     print(f"gpu: {args.gpu}")
@@ -128,10 +124,18 @@ if __name__ == "__main__":
             if policy['name'] not in loaded_models:
                 ### MODEL LOADING ###
                 model = GNNPolicy().to(device)
-                if policy['name'] == 'supervised':
-                    model.load_state_dict(torch.load(f"model/{args.problem}/{policy['seed']}/train_params.pkl"))
+                if policy['name'] == 'imitation':
+                    if int(args.load_n) == 0:
+                        model.load_state_dict(
+                            torch.load(f"model/imitation/{tsp_size}n/train_params.pkl", map_location=device))
+                    elif int(args.load_n) == -1:
+                        pass
+                    else:
+                        model.load_state_dict(
+                            torch.load(f"model/reinforce/{args.load_n}n-{tsp_size}n /train_params.pkl",
+                                       map_location=device))
                 else:
-                    raise Exception(f"Unrecognized GNN policy {policy[name]}")
+                    raise Exception(f"Unrecognized GNN policy {policy['name']}")
                 loaded_models[policy['name']] = model
 
             policy['model'] = loaded_models[policy['name']]
@@ -160,6 +164,7 @@ if __name__ == "__main__":
         'branching/vanillafullstrong/idempotent': True
     }
 
+    result_file = f"{args.load_n}-{tsp_size}_{time.strftime('%Y%m%d-%H%M%S')}.csv"
     with open(f"results/{result_file}", 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -173,7 +178,7 @@ if __name__ == "__main__":
                     env = ecole.environment.Configuring(scip_params={
                         **scip_parameters, f"branching/{policy['name']}/priority": 9999999
                     })
-                    env.seed(policy['seed'])
+                    env.seed(seed)
 
                     walltime = time.perf_counter()
                     proctime = time.process_time()
@@ -188,8 +193,8 @@ if __name__ == "__main__":
                     # Run the GNN policy
                     env = ecole.environment.Branching(observation_function=ecole.observation.NodeBipartite(),
                                                       scip_params=scip_parameters)
-                    env.seed(policy['seed'])
-                    torch.manual_seed(policy['seed'])
+                    env.seed(seed)
+                    torch.manual_seed(seed)
 
                     walltime = time.perf_counter()
                     proctime = time.process_time()
@@ -220,7 +225,7 @@ if __name__ == "__main__":
 
                 writer.writerow({
                     'policy': f"{policy['type']}:{policy['name']}",
-                    'seed': policy['seed'],
+                    'seed': seed,
                     'type': instance['type'],
                     'instance': instance['path'],
                     'nnodes': nnodes,
@@ -234,5 +239,5 @@ if __name__ == "__main__":
                 csvfile.flush()
 
                 print(
-                    f"  {policy['type']}:{policy['name']} {policy['seed']} - {nnodes} nodes {nlps} lps {stime:.2f} ({walltime:.2f} wall {proctime:.2f} proc) s. {status}"
+                    f"  {policy['type']}:{policy['name']} {seed} - {nnodes} nodes {nlps} lps {stime:.2f} ({walltime:.2f} wall {proctime:.2f} proc) s. {status}"
                 )

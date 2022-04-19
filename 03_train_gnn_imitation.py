@@ -183,9 +183,6 @@ if __name__ == "__main__":
             log(f"  best model so far", logfile)
         elif scheduler.num_bad_epochs == 10:
             log(f"  10 epochs without improvement, decreasing learning rate", logfile)
-        # elif scheduler.num_bad_epochs == 20:
-        #     log(f"  20 epochs without improvement, early stopping", logfile)
-        #     break
 
     policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params.pkl'))
     valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k, None)
