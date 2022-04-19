@@ -112,9 +112,9 @@ if __name__ == "__main__":
 
         # collect additional metrics for information purposes
         information_function={
-            "nnodes": ec.reward.NNodes().cumsum(),
-            "lpiters": ec.reward.LpIterations().cumsum(),
-            "time": ec.reward.SolvingTime().cumsum(),
+            "nnodes": ecole.reward.NNodes().cumsum(),
+            "lpiters": ecole.reward.LpIterations().cumsum(),
+            "time": ecole.reward.SolvingTime().cumsum(),
         },
     )
 
