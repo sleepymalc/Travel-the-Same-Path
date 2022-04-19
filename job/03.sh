@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=imit25-0.5
+#SBATCH --job-name=imit20-0.5
 
 #SBATCH --mail-user=pbb@umich.edu
 
@@ -30,7 +30,7 @@ module load cuda/11.5.1
 
 cd /home/pbb/Project/Test/
 
-python 03_train_gnn_imitation.py -n 25 -g 0 
+python 03_train_gnn_imitation.py -n 20 -g 0 
 
 /bin/hostname
 sleep 60
