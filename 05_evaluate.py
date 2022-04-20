@@ -33,61 +33,94 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
+    ### HYPER PARAMETERS ###
+    normal_size = 1
+    assert normal_size <= parameters.test_instance
+
+    transfer_size_s = 1
+    transfer_size_m = 1
+    transfer_size_l = 100
+    assert transfer_size_s <= parameters.transfer_instance
+    assert transfer_size_m <= parameters.transfer_instance
+    assert transfer_size_l <= parameters.transfer_instance
+
+    seed = parameters.seed
+
+    internal_branchers = ['relpscost']
+    gnn_models = ['supervised']
+    time_limit = 3600
+    branching_policies = []
+    rng = np.random.RandomState(parameters.seed)
     tsp_size = int(args.num)
     imitation_size, reinforcement_size = int(args.load.split('-')[0][:-1]), int(args.load.split('-')[1][:-1])
 
-    instances = [{
+    instances = rng.choice([{
         'type': f'tsp{tsp_size}',
         'path': f"data/tsp{tsp_size}/instances/test_{tsp_size}n/instance_{i+1}.lp"
-    } for i in range(parameters.test_instance)]
+    } for i in range(parameters.test_instance)],
+                           size=normal_size,
+                           replace=True).tolist()
 
     if tsp_size == 15:
-        instances += [{
+        instances += rng.choice([{
             'type': 'transfer-small',
-            'path': f"data/tsp15/instances/test_7n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-        instances += [{
+            'path': f"data/tsp15/instances/transfer_7n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_s,
+                                replace=True).tolist()
+        instances += rng.choice([{
             'type': 'transfer-medium',
-            'path': f"data/tsp15/instances/test_10n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-        instances += [{
-            'type': 'transfer-big',
-            'path': f"data/tsp15/instances/test_30n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-    elif tsp_size == 20:
-        instances += [{
-            'type': 'transfer-small',
-            'path': f"data/tsp20/instances/test_10n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-        instances += [{
-            'type': 'transfer-medium',
-            'path': f"data/tsp20/instances/test_13n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-        instances += [{
-            'type': 'transfer-big',
-            'path': f"data/tsp20/instances/test_40n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-    elif tsp_size == 25:
-        instances += [{
-            'type': 'transfer-small',
-            'path': f"data/tsp25/instances/test_12n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-        instances += [{
-            'type': 'transfer-medium',
-            'path': f"data/tsp25/instances/test_16n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
-        instances += [{
-            'type': 'transfer-big',
-            'path': f"data/tsp25/instances/test_50n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)]
+            'path': f"data/tsp15/instances/transfer_10n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_m,
+                                replace=True).tolist()
+        instances += rng.choice([{
+            'type': 'transfer-large',
+            'path': f"data/tsp15/instances/transfer_30n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_l,
+                                replace=True).tolist()
 
-    ### HYPER PARAMETERS ###
-    max_epochs = 1000
-    seed = parameters.seed
-    internal_branchers = ['relpscost']
-    gnn_models = ['supervised']  # Can be supervised
-    time_limit = 3600
-    branching_policies = []
+    elif tsp_size == 20:
+        instances += rng.choice([{
+            'type': 'transfer-small',
+            'path': f"data/tsp20/instances/transfer_10n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_s,
+                                replace=True).tolist()
+        instances += rng.choice([{
+            'type': 'transfer-medium',
+            'path': f"data/tsp20/instances/transfer_13n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_m,
+                                replace=True).tolist()
+        instances += rng.choice([{
+            'type': 'transfer-large',
+            'path': f"data/tsp20/instances/transfer_40n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_l,
+                                replace=True).tolist()
+
+    elif tsp_size == 25:
+        instances += rng.choice([{
+            'type': 'transfer-small',
+            'path': f"data/tsp25/instances/transfer_12n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_s,
+                                replace=True).tolist()
+        instances += rng.choice([{
+            'type': 'transfer-medium',
+            'path': f"data/tsp25/instances/transfer_16n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_m,
+                                replace=True).tolist()
+        instances += rng.choice([{
+            'type': 'transfer-large',
+            'path': f"data/tsp25/instances/transfer_50n/instance_{i+1}.lp"
+        } for i in range(parameters.transfer_instance)],
+                                size=transfer_size_l,
+                                replace=True).tolist()
 
     # SCIP internal brancher baselines
     for brancher in internal_branchers:

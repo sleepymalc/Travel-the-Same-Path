@@ -6,7 +6,7 @@ our experiment setting.
 seed = 545
 
 # 01_instance
-n = 20
+n = 25
 train_instance = 10000
 valid_instance = 2000
 transfer_instance = 100
