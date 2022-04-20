@@ -289,10 +289,10 @@ if __name__ == '__main__':
     print(node_record_prob)
     time_limit = parameters.time_limit
 
-    instances_train = glob.glob(f'data_0.5p/tsp{n}/instances/train_{n}n/*.lp')
-    instances_valid = glob.glob(f'data_0.5p/tsp{n}/instances/valid_{n}n/*.lp')
-    instances_test = glob.glob(f'data_0.5p/tsp{n}/instances/test_{n}n/*.lp')
-    out_dir = f'data_{node_record_prob}p/tsp{n}/samples'
+    instances_train = glob.glob(f'data/tsp{n}/instances/train_{n}n/*.lp')
+    instances_valid = glob.glob(f'data/tsp{n}/instances/valid_{n}n/*.lp')
+    instances_test = glob.glob(f'data/tsp{n}/instances/test_{n}n/*.lp')
+    out_dir = f'data/tsp{n}/samples'
 
     print(f"{len(instances_train)} train instances for {train_size} samples")
     print(f"{len(instances_valid)} validation instances for {valid_size} samples")
