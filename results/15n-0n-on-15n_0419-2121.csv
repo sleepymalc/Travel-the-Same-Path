@@ -2416,3 +2416,4 @@ gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_92.
 internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_29.lp,396433,345425,1369.1,0.0,optimal,1453.0536220420036,1446.976595
 gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_29.lp,396433,345425,1362.99,0.0,optimal,1451.193338707999,1444.5973369999992
 internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_71.lp,396433,345425,1373.83,0.0,optimal,1459.8459413329983,1451.6618589999998
+gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_71.lp,396433,345425,1402.11,0.0,optimal,1492.980431750002,1483.9845790000036

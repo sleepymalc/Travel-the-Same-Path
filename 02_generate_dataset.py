@@ -268,7 +268,7 @@ if __name__ == '__main__':
         '--probability',
         help='Node record probability',
         type=float,
-        default=0.05,
+        default=0.5,
     )
     parser.add_argument(
         '-n',
