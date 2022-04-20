@@ -23,6 +23,11 @@ def pad_tensor(input_, pad_sizes, pad_value=-1e8):
         [F.pad(slice_, (0, max_pad_size - slice_.size(0)), 'constant', pad_value) for slice_ in output], dim=0)
     return output
 
+def merge_two_dicts(x, y):
+    """Given two dictionaries, merge them into a new dict as a shallow copy."""
+    z = x.copy()
+    z.update(y)
+    return z
 
 class BipartiteNodeData(torch_geometric.data.Data):
 

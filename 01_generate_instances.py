@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     # train instances
     n = parameters.train_instance
-    lp_dir = f'data/tsp{parameters.n}/instances/tsp/train_{num}n'
+    lp_dir = f'data/tsp{parameters.n}/instances/train_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     # validation instances
     n = parameters.valid_instance
-    lp_dir = f'data/tsp{parameters.n}/instances/tsp/valid_{num}n'
+    lp_dir = f'data/tsp{parameters.n}/instances/valid_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # small transfer instances
     n = parameters.transfer_instance
     num = int(parameters.n / 2)
-    lp_dir = f'data/tsp{parameters.n}/instances/tsp/transfer_{num}n'
+    lp_dir = f'data/tsp{parameters.n}/instances/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # medium transfer instances
     n = parameters.transfer_instance
     num = int(parameters.n / 1.5)
-    lp_dir = f'data/tsp{parameters.n}/instances/tsp/transfer_{num}n'
+    lp_dir = f'data/tsp{parameters.n}/instances/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # big transfer instances
     n = parameters.transfer_instance
     num = int(parameters.n * 2)
-    lp_dir = f'data/tsp{parameters.n}/instances/tsp/transfer_{num}n'
+    lp_dir = f'data/tsp{parameters.n}/instances/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     # test instances
     n = parameters.test_instance
     num = int(parameters.n)
-    lp_dir = f'data/tsp{parameters.n}/instances/tsp/test_{num}n'
+    lp_dir = f'data/tsp{parameters.n}/instances/test_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
