@@ -2408,3 +2408,9 @@ gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_43.
 internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_55.lp,396433,345425,1327.65,0.0,optimal,1407.6646224999968,1402.7690720000028
 gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_55.lp,396433,345425,1401.15,0.0,optimal,1491.7172004579988,1481.4130640000003
 internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_90.lp,396433,345425,1366.04,0.0,optimal,1452.3269685840023,1443.9764480000013
+gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_90.lp,396433,345425,1339.64,0.0,optimal,1428.671137207999,1419.9860889999982
+internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_46.lp,396433,345425,1335.51,0.0,optimal,1420.780711042,1412.5094790000003
+gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_46.lp,396433,345425,1324.21,0.0,optimal,1412.562949416002,1404.2794089999989
+internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_92.lp,396433,345425,1347.17,0.0,optimal,1431.5778032919989,1424.3907919999983
+gnn:supervised,545,transfer-large,data/tsp15/instances/transfer_30n/instance_92.lp,396433,345425,1365.48,0.0,optimal,1455.7847562079987,1445.9359409999997
+internal:relpscost,545,transfer-large,data/tsp15/instances/transfer_30n/instance_29.lp,396433,345425,1369.1,0.0,optimal,1453.0536220420036,1446.976595
