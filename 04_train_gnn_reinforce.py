@@ -148,11 +148,6 @@ if __name__ == "__main__":
 
         # Run the GNN brancher
         observation, action_set, loss, done, info = train_env.reset(instance)
-        print(observation)
-        print(action_set)
-        print(loss)
-        print(done)
-        print(info)
         while not done:
             with torch.no_grad():
                 observation = (
