@@ -2344,6 +2344,13 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">refs.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
+    <bcf:citekey order="1">B&amp;B.ch7</bcf:citekey>
+    <bcf:citekey order="2">GasseCFCL19</bcf:citekey>
+    <bcf:citekey order="3">Efficient-Training-of-Artificial-Neural-Networks</bcf:citekey>
+    <bcf:citekey order="4">GasseCFCL19</bcf:citekey>
+    <bcf:citekey order="5">B&amp;B.ch7</bcf:citekey>
+    <bcf:citekey order="6">GasseCFCL19</bcf:citekey>
+    <bcf:citekey order="7">Efficient-Training-of-Artificial-Neural-Networks</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

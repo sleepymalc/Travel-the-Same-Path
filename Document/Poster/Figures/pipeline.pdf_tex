@@ -50,22 +50,55 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.5)%
+  \begin{picture}(1,0.86666667)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
     \put(0,0){\includegraphics[width=\unitlength,page=1]{pipeline.pdf}}%
-    \put(0.09964164,0.13409373){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Random \\TSP Problem\\Instances\end{tabular}}}}%
+    \put(0.00669593,0.48836962){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{TSP Problem Instances}\end{tabular}}}}%
+    \put(0.01906924,0.24448662){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{encode}\end{tabular}}}}%
+    \put(0.14454967,0.04942907){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Graph Neural Network}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=2]{pipeline.pdf}}%
-    \put(0.24212116,0.44610386){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Solving \\TSP Instances\\by SCIP\end{tabular}}}}%
+    \put(0.72493458,0.66280454){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scalebox{0.5}{Solve LIP by SCIP}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=3]{pipeline.pdf}}%
-    \put(0.40832215,0.13409373){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}Record Expert\\Branching Decision\end{tabular}}}}%
+    \put(0.78976059,0.48831215){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Record Expert Branching}\end{tabular}}}}%
+    \put(0.82740892,0.16186282){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Cross Entropy Loss}\end{tabular}}}}%
+    \put(0.7721386,0.09137281){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Back Propagation}\end{tabular}}}}%
+    \put(0.48245716,0.04931424){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Prediction}\end{tabular}}}}%
     \put(0,0){\includegraphics[width=\unitlength,page=4]{pipeline.pdf}}%
-    \put(0.44937522,0.21746127){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}1\end{tabular}}}}%
-    \put(0.36357358,0.31929652){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}2\end{tabular}}}}%
-    \put(0.42294143,0.27899577){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}3\end{tabular}}}}%
-    \put(0.45717538,0.30629628){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}5\end{tabular}}}}%
-    \put(0.40950782,0.21832797){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}4\end{tabular}}}}%
-    \put(0.36487363,0.25559533){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}6\end{tabular}}}}%
-    \put(0.3786684,0.3658275){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}7\end{tabular}}}}%
+    \put(0.88132032,0.58209044){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(1^{st}\)}\end{tabular}}}}%
+    \put(0.92422288,0.57033698){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(2^{nd}\)}\end{tabular}}}}%
+    \put(0.83882039,0.70277799){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(3^{rd}\)}\end{tabular}}}}%
+    \put(0.84370982,0.64484024){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(4^{th}\)}\end{tabular}}}}%
+    \put(0.89961802,0.64343955){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(5^{th}\)}\end{tabular}}}}%
+    \put(0.92787749,0.65368907){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(6^{th}\)}\end{tabular}}}}%
+    \put(0.85724449,0.74934038){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(7^{th}\)}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{pipeline.pdf}}%
+    \put(0.70150562,0.08909869){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(1^{st}\)}\end{tabular}}}}%
+    \put(0.74440818,0.07734523){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(2^{nd}\)}\end{tabular}}}}%
+    \put(0.65900569,0.20978624){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(3^{rd}\)}\end{tabular}}}}%
+    \put(0.66389512,0.15184849){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(4^{th}\)}\end{tabular}}}}%
+    \put(0.71980332,0.1504478){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(5^{th}\)}\end{tabular}}}}%
+    \put(0.74806279,0.16069732){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(6^{th}\)}\end{tabular}}}}%
+    \put(0.67742979,0.25634863){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(7^{th}\)}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=6]{pipeline.pdf}}%
+    \put(0.25913457,0.66280454){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scalebox{0.5}{Formulate LIP by CPLEX}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=7]{pipeline.pdf}}%
+    \put(0.35319789,0.48831215){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Linear Integer Programming of TSP}\end{tabular}}}}%
+    \put(0.40242214,0.8463206){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Data Generation\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=8]{pipeline.pdf}}%
+    \put(0.39194689,0.00980326){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}Imitation Learning\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=9]{pipeline.pdf}}%
+    \put(0.52511953,0.08914617){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(1^{st}\)}\end{tabular}}}}%
+    \put(0.56802216,0.07739271){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textcolor{magenta}{\scalebox{0.5}{\(6^{nd}\)}}\end{tabular}}}}%
+    \put(0.48261957,0.20983365){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textcolor{magenta}{\scalebox{0.5}{\(7^{rd}\)}}\end{tabular}}}}%
+    \put(0.487509,0.1518959){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(4^{th}\)}\end{tabular}}}}%
+    \put(0.54341723,0.15049527){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.5}{\(5^{th}\)}\end{tabular}}}}%
+    \put(0.57167676,0.16074473){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textcolor{magenta}{\scalebox{0.5}{\(2^{th}\)}}\end{tabular}}}}%
+    \put(0.50104376,0.2563961){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textcolor{magenta}{\scalebox{0.5}{\(3^{th}\)}}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=10]{pipeline.pdf}}%
+    \put(0.3811704,0.17770386){\makebox(0,0)[t]{\lineheight{1.25}\smash{\begin{tabular}[t]{c}\scalebox{0.7}{Branching}\\\scalebox{0.7}{Prediction}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=11]{pipeline.pdf}}%
+    \put(0.68530445,0.04931424){\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\scalebox{0.7}{Label}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=12]{pipeline.pdf}}%
   \end{picture}%
 \endgroup%
