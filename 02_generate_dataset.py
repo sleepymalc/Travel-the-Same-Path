@@ -286,7 +286,6 @@ if __name__ == '__main__':
     valid_size = parameters.valid_size
     test_size = parameters.test_size
     node_record_prob = float(args.probability)
-    print(node_record_prob)
     time_limit = parameters.time_limit
 
     instances_train = glob.glob(f'data/tsp{n}/instances/train_{n}n/*.lp')
@@ -294,6 +293,7 @@ if __name__ == '__main__':
     instances_test = glob.glob(f'data/tsp{n}/instances/test_{n}n/*.lp')
     out_dir = f'data/tsp{n}/samples'
 
+    print(f'node record probability: {node_record_prob}')
     print(f"{len(instances_train)} train instances for {train_size} samples")
     print(f"{len(instances_valid)} validation instances for {valid_size} samples")
     print(f"{len(instances_test)} test instances for {test_size} samples")
