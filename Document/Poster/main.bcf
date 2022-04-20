@@ -2349,11 +2349,13 @@
     <bcf:citekey order="3">howard1960dynamic</bcf:citekey>
     <bcf:citekey order="4">GasseCFCL19</bcf:citekey>
     <bcf:citekey order="5">Efficient-Training-of-artificial-Neural-Networks-for-Autonomous-Navigation</bcf:citekey>
-    <bcf:citekey order="6">MTZ-formulation</bcf:citekey>
-    <bcf:citekey order="7">B&amp;B.ch7</bcf:citekey>
-    <bcf:citekey order="8">howard1960dynamic</bcf:citekey>
-    <bcf:citekey order="9">GasseCFCL19</bcf:citekey>
-    <bcf:citekey order="10">Efficient-Training-of-artificial-Neural-Networks-for-Autonomous-Navigation</bcf:citekey>
+    <bcf:citekey order="6">prouvost2020ecole</bcf:citekey>
+    <bcf:citekey order="7">MTZ-formulation</bcf:citekey>
+    <bcf:citekey order="8">B&amp;B.ch7</bcf:citekey>
+    <bcf:citekey order="9">howard1960dynamic</bcf:citekey>
+    <bcf:citekey order="10">GasseCFCL19</bcf:citekey>
+    <bcf:citekey order="11">Efficient-Training-of-artificial-Neural-Networks-for-Autonomous-Navigation</bcf:citekey>
+    <bcf:citekey order="12">prouvost2020ecole</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

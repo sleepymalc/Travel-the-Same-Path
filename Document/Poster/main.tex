@@ -16,6 +16,10 @@
 \usepackage{bbm}
 
 \usepackage{mwe} % for placeholder images
+% notes
+\usepackage[color=pink]{todonotes}
+\usepackage{marginnote}
+\let\marginpar\marginnote
 
 \addbibresource{refs.bib}
 
@@ -134,37 +138,46 @@
 		cloning}\cite{Efficient-Training-of-artificial-Neural-Networks-for-Autonomous-Navigation}.
 
 	Mathematically, we first run the SOTA solver \texttt{SCIP} to get state-action pairs \(\mathcal{\MakeUppercase{d}} = \left\{(s_{i} , \bm{a} _{i} ^\ast)\right\}_{i = 1}^N\),
-	and then learn our policy \(\widetilde{\pi} ^\ast\) by minimizing the cross-entropy loss
+	where the states is the solver's branching strategy, and the action set contains what variables we can branch on.
+
+
+	To learn the policy \(\widetilde{\pi} ^\ast\), we minimize the cross-entropy loss between our branching prediction and the solver's branching choice:
 	\[
 		\mathcal{\MakeUppercase{l}} (\theta ) = - \frac{1}{N}\sum\limits_{(\bm{s}, \bm{a}^\ast)\in \mathcal{\MakeUppercase{d}} }\log \widetilde{\pi}_\theta (\bm{a} ^\ast \mid \bm{s} ).
 	\]
 
-
+	After learning, we evaluate our model on TSP instances with various sizes to see the generalization ability. Specifically, we use
+	Ecole\cite{prouvost2020ecole} to do the evaluation. We configure \texttt{SCIP} to its default strategy and compare the result to our learned branching
+	strategy by looking at the time needed to solve this particular TSP instance.
 	}
 	\column{0.3}
 	\block{Experimental Results}{
-		[TODO]
+		\todo[inline]{Wait for the evaluation result}
 	}
 
 	\block{Conclusion}{
-		(Need to discuss together.)
-		Even with a fairly limited scope and size of our neural network, we have already
+		Unlike other works which focuses on just to solve TSP approximately, we focus on generalization ability of solving TSP \textbf{exactly}.
+
+		With limited computation power and training on small size instances, our result shows a promising performance on generalization ability of branch, which is a hard
+		combinatorial optimization problem and typically hard to generalize.
+
+		\textbf{The significance} of our works is pretty straightforward: We're now confidence to generalize on larger instances by combining various machine learning techniques
+		like standard reinforcement learning, deep learning, transformer, etc. This is promising since our result shows that we can fit small instances while
+		keep the generalization ability.
+		\todo[inline]{discuss}
 	}
 
 	\block{Future Work}{
-		We will implement unsupervised reinforcement learning. After getting a stable model from imitation learning, we remove the expert's
-		instructions and let the model explore by itself. Another way to further explore this topic is to perform on larger TSP datasets (e.g. TSP 50).
+		Due to computational limitation, we can't train on larger instances. One may further generalize our work by training on larger instances, for instance, TSP50.
+
+		On the other hand, our work should be easy to reproduce and be combined with various of standard reinforcement technique to further fine-tuned our trained model.
 	}
 
-	\block{References}{
-		%TODO
-	}
-
-	%\block{References}{
-	%    \vspace{-1em}
-	%    \begin{footnotesize}
-	%    \printbibliography[heading=none]
-	%    \end{footnotesize}
-	%}
+	% \block{References}{
+	% 	\vspace{-1em}
+	% 	\begin{footnotesize}
+	% 		\printbibliography[heading=none]
+	% 	\end{footnotesize}
+	% }
 \end{columns}
 \end{document}
