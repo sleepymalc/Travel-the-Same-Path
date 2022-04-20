@@ -35,12 +35,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
-    normal_size = 0
+    normal_size = 1000
     assert normal_size <= parameters.test_instance
 
-    transfer_size_s = 0
-    transfer_size_m = 0
-    transfer_size_l = 2
+    transfer_size_s = 100
+    transfer_size_m = 100
+    transfer_size_l = 100
     assert transfer_size_s <= parameters.transfer_instance
     assert transfer_size_m <= parameters.transfer_instance
     assert transfer_size_l <= parameters.transfer_instance
@@ -62,65 +62,24 @@ if __name__ == "__main__":
                            size=normal_size,
                            replace=True).tolist()
 
-    if tsp_size == 15:
-        instances += rng.choice([{
-            'type': 'transfer-small',
-            'path': f"data/tsp15/instances/transfer_7n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_s,
-                                replace=True).tolist()
-        instances += rng.choice([{
-            'type': 'transfer-medium',
-            'path': f"data/tsp15/instances/transfer_10n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_m,
-                                replace=True).tolist()
-        instances += rng.choice([{
-            'type': 'transfer-large',
-            'path': f"data/tsp15/instances/transfer_30n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_l,
-                                replace=True).tolist()
-
-    elif tsp_size == 20:
-        instances += rng.choice([{
-            'type': 'transfer-small',
-            'path': f"data/tsp20/instances/transfer_10n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_s,
-                                replace=True).tolist()
-        instances += rng.choice([{
-            'type': 'transfer-medium',
-            'path': f"data/tsp20/instances/transfer_13n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_m,
-                                replace=True).tolist()
-        instances += rng.choice([{
-            'type': 'transfer-large',
-            'path': f"data/tsp20/instances/transfer_40n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_l,
-                                replace=True).tolist()
-
-    elif tsp_size == 25:
-        instances += rng.choice([{
-            'type': 'transfer-small',
-            'path': f"data/tsp25/instances/transfer_12n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_s,
-                                replace=True).tolist()
-        instances += rng.choice([{
-            'type': 'transfer-medium',
-            'path': f"data/tsp25/instances/transfer_16n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_m,
-                                replace=True).tolist()
-        instances += rng.choice([{
-            'type': 'transfer-large',
-            'path': f"data/tsp25/instances/transfer_50n/instance_{i+1}.lp"
-        } for i in range(parameters.transfer_instance)],
-                                size=transfer_size_l,
-                                replace=True).tolist()
+    instances += rng.choice([{
+        'type': 'transfer-small',
+        'path': f"data/tsp{tsp_size}/instances/transfer_{int(tsp_size / 2)}n/instance_{i+1}.lp"
+    } for i in range(parameters.transfer_instance)],
+                            size=transfer_size_s,
+                            replace=True).tolist()
+    instances += rng.choice([{
+        'type': 'transfer-medium',
+        'path': f"data/tsp{tsp_size}/instances/transfer_{int(tsp_size / 1.5)}n/instance_{i+1}.lp"
+    } for i in range(parameters.transfer_instance)],
+                            size=transfer_size_m,
+                            replace=True).tolist()
+    instances += rng.choice([{
+        'type': 'transfer-large',
+        'path': f"data/tsp{tsp_size}/instances/transfer_{int(tsp_size * 2)}n/instance_{i+1}.lp"
+    } for i in range(parameters.transfer_instance)],
+                            size=transfer_size_l,
+                            replace=True).tolist()
 
     # SCIP internal brancher baselines
     for brancher in internal_branchers:
@@ -149,6 +108,7 @@ if __name__ == "__main__":
         device = f"cuda:0"
 
     import torch
+    import torch_geometric
     from model import GNNPolicy
 
     # load and assign tensorflow models to policies (share models and update parameters)
@@ -217,7 +177,7 @@ if __name__ == "__main__":
         'branching/vanillafullstrong/idempotent': True
     }
 
-    result_file = f"{args.load}_{time.strftime('%m%d-%H%M')}.csv"
+    result_file = f"{args.load}-on-{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
     with open(f"results/{result_file}", 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
