@@ -35,12 +35,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
-    normal_size = 1
+    normal_size = 0
     assert normal_size <= parameters.test_instance
 
-    transfer_size_s = 1
-    transfer_size_m = 1
-    transfer_size_l = 100
+    transfer_size_s = 0
+    transfer_size_m = 0
+    transfer_size_l = 2
     assert transfer_size_s <= parameters.transfer_instance
     assert transfer_size_m <= parameters.transfer_instance
     assert transfer_size_l <= parameters.transfer_instance

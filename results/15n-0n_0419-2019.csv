@@ -1,2 +1,0 @@
-policy,seed,type,instance,nnodes,nlps,stime,gap,status,walltime,proctime
-internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_446.lp,20095,18337,50.35,0.0,optimal,54.100284166,53.943148
