@@ -11,6 +11,7 @@ number and this is easier for future reference.
 """
 # default parameters
 seed = 545
+time_limit = 3600
 
 # 01_instance
 train_instance = 10000
@@ -22,4 +23,3 @@ test_instance = 2000
 train_size = 100000
 valid_size = 20000
 test_size = 20000
-time_limit = 3600

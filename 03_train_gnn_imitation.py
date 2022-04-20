@@ -90,6 +90,14 @@ if __name__ == "__main__":
         default=15,
     )
 
+    parser.add_argument(
+        '-l',
+        '--load_n',
+        help='load model trained by imitation learning with size specified.',
+        type=int,
+        default=15,
+    )
+
     args = parser.parse_args()
 
     ### HYPER PARAMETERS ###
@@ -97,7 +105,7 @@ if __name__ == "__main__":
     batch_size = 32
     pretrain_batch_size = 128
     valid_batch_size = 128
-    lr = 1e-5
+    lr = 1e-9
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
@@ -150,7 +158,6 @@ if __name__ == "__main__":
     train_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'train').glob('sample_*.pkl')]
     pretrain_files = [f for i, f in enumerate(train_files) if i % 10 == 0]
     valid_files = [str(file) for file in (pathlib.Path(f'data/tsp{tsp_size}/samples') / 'valid').glob('sample_*.pkl')]
-    dataset_size = len(train_files)
     pretrain_data = GraphDataset(pretrain_files)
     pretrain_loader = torch_geometric.loader.DataLoader(pretrain_data, pretrain_batch_size, shuffle=False)
     valid_data = GraphDataset(valid_files)
@@ -162,9 +169,7 @@ if __name__ == "__main__":
             n = pretrain(policy, pretrain_loader)
             log(f"PRETRAINED {n} LAYERS", logfile)
         else:
-            epoch_train_files = rng.choice(train_files,
-                                           int(np.floor(dataset_size / batch_size)) * batch_size,
-                                           replace=True)
+            epoch_train_files = rng.choice(train_files, int(np.floor(10000 / batch_size)) * batch_size, replace=True)
             train_data = GraphDataset(epoch_train_files)
             train_loader = torch_geometric.loader.DataLoader(train_data, batch_size, shuffle=True)
             train_loss, train_kacc, entropy = process(policy, train_loader, top_k, optimizer)
@@ -183,9 +188,3 @@ if __name__ == "__main__":
             log(f"  best model so far", logfile)
         elif scheduler.num_bad_epochs == 10:
             log(f"  10 epochs without improvement, decreasing learning rate", logfile)
-
-    policy.load_state_dict(torch.load(pathlib.Path(running_dir) / f'train_params.pkl'))
-    valid_loss, valid_kacc, entropy = process(policy, valid_loader, top_k, None)
-    log(
-        f"BEST VALID LOSS: {valid_loss:0.3f} " +
-        "".join([f" acc@{k}: {acc:0.3f}" for k, acc in zip(top_k, valid_kacc)]), logfile)
