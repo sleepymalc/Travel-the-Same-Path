@@ -1,0 +1,54 @@
+\documentclass[20pt,,margin=1in,innermargin=-4.5in,blockverticalspace=-0.25in]{tikzposter}
+
+\geometry{paperwidth=42in,paperheight=32.5in}
+\usepackage{SUtheme}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{enumitem}
+\usepackage[backend=biber,style=numeric]{biblatex}
+
+\usepackage{mathtools}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{bm}
+\usepackage{bbm}
+
+\usepackage{mwe} % for placeholder images
+
+\addbibresource{refs.bib}
+
+% set theme parameters
+\tikzposterlatexaffectionproofoff
+\usetheme{SUTheme}
+\usecolorstyle{SUStyle}
+\usetitlestyle{Filled}
+
+\usepackage[scaled]{helvet}
+\renewcommand\familydefault{\sfdefault} 
+\usepackage[T1]{fontenc}
+
+
+\title{Using Graph Neural Network to Solve the Travelling Salesman Problem}
+\author{Pingbang Hu, Jonathan Moore, Yi Zhou, Shubham Kumar Pandey, Anuraag Ramesh}
+\institute{University of Michigan}
+
+\titlegraphic{\includegraphics[width=0.06\textwidth]{Figures/U-M_Logo-Hex.png}}
+
+% begin document
+\begin{document}
+\maketitle
+\centering
+
+\begin{figure}[H]
+	\centering
+	\incfig{pipeline}
+	\label{fig:pipeline}
+\end{figure}
+
+\end{document}
