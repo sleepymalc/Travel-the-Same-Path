@@ -34,7 +34,7 @@
 	\import{./Figures/}{#1.pdf_tex}
 }
 
-\title{Using Graph Neural Network to Solve the Traveling Salesman Problem}
+\title{Travel the Same Path: A Novel TSP solving strategy}
 \author{Pingbang Hu, Jonathan Moore, Yi Zhou, Shubham Kumar Pandey, Anuraag Ramesh}
 \institute{University of Michigan}
 \titlegraphic{\includegraphics[width=0.06\textwidth]{Figures/U-M_Logo-Hex.png}}
@@ -132,7 +132,7 @@
 		cloning}.
 
 	Mathematically, we first run the SOTA solver \texttt{SCIP} to get state-action pairs \(\mathcal{\MakeUppercase{d}} = \left\{(s_{i} , \bm{a} _{i} ^\ast)\right\}_{i = 1}^N\),
-	where the state is the solver's branching strategy, and the action set contains what variables we can branch on.
+	where the state is the problem status, and the action is determined by the solver's branching strategy, and the action set contains what variables we can branch on.
 
 
 	To learn the policy \(\widetilde{\pi} ^\ast\), we minimize the cross-entropy loss between our branching prediction and the solver's branching choice:
@@ -181,17 +181,17 @@
 		We see that our model outperform the baseline on TSP15, and \textbf{successfully generalize to TSP10, TSP20
 			and TSP30}.
 
-		However, there is a counter-intuitive result, namely on TSP20 and TSP30. We see that our model does not
-		outperform the baseline, and is behind by 50\%\ on average; but our model does outperform the baseline
+		However, there is a counter-intuitive result, namely on TSP25, our model does not
+		outperform the baseline, and is behind by 50\%\ on average; but on TSP30 our model does outperform the baseline
 		by 4.70\%. A potential explanation is that our learned model is more stable and robust than the
-		baseline's heuristic, hence we can still conclude that our model \textbf{do} generalize greatly on larger
+		baseline's heuristic, hence we can still conclude that our model \textbf{does} generalize greatly on larger
 		or smaller instances.
 	}
 
 	\block{Conclusion}{
 		\textbf{Unlike other works} which focuses on just to solve TSP approximately, we focus on generalization ability of solving TSP \textbf{exactly}.
 
-		With limited computation power and training on small size instances, our result shows a promising performance on the generalization ability of branch, which is a hard
+		With limited computation power and training on small size instances, our result shows a promising performance on the generalization ability of branching, which is a hard
 		combinatorial optimization problem and typically hard to generalize.
 
 		\textbf{The significance} of our works is pretty straightforward: We're now the confidence to generalize on larger instances by combining various machine learning techniques
@@ -201,7 +201,7 @@
 	\block{Future Work}{
 		\textbf{Due to computational limitation}, we can't train on larger instances. One may further generalize our work by training on larger instances, for instance, TSP50, TSP100, or higher.
 
-		On the other hand, our work should be easy to reproduce and be combined with various standard reinforcement techniques to further fine-tuned our trained model.
+		On the other hand, our work should be easy to reproduce and be combined with various standard reinforcement techniques like using better reward functions to further improve our trained model.
 	}
 \end{columns}
 \end{document}
