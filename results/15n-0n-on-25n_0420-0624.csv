@@ -232,3 +232,13 @@ gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_874.lp,90030,737
 internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_1674.lp,59384,48163,154.97,0.0,optimal,180.11568061914295,179.6635149089998
 gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_1674.lp,90030,73792,237.94,0.0,optimal,278.29322415823117,277.6258948340037
 internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_88.lp,59384,48163,155.07,0.0,optimal,179.83103689271957,179.38309675799974
+gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_88.lp,90030,73792,238.61,0.0,optimal,279.1056237369776,278.4364395800003
+internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_1834.lp,59384,48163,155.1,0.0,optimal,179.94199261115864,179.49249136599974
+gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_1834.lp,90030,73792,238.73,0.0,optimal,278.7647400116548,278.0983624720029
+internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_1041.lp,59384,48163,155.32,0.0,optimal,180.3540188348852,179.70687221900153
+gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_1041.lp,90030,73792,237.1,0.0,optimal,277.0185069530271,276.35654462199454
+internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_1028.lp,59384,48163,155.01,0.0,optimal,179.8000678177923,179.3525451789974
+gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_1028.lp,90030,73792,237.2,0.0,optimal,277.32517517497763,276.66225093400135
+internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_1920.lp,59384,48163,155.07,0.0,optimal,180.02155324118212,179.57577163400128
+gnn:supervised,545,tsp25,data/tsp25/instances/test_25n/instance_1920.lp,90030,73792,237.55,0.0,optimal,277.7771876938641,277.11318865299836
+internal:relpscost,545,tsp25,data/tsp25/instances/test_25n/instance_1039.lp,59384,48163,155.17,0.0,optimal,179.93465484306216,179.48034733299573
