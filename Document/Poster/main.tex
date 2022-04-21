@@ -8,20 +8,12 @@
 \usepackage{mathrsfs}
 \usepackage{graphicx}
 \usepackage{adjustbox}
-\usepackage{enumitem}
-\usepackage[backend=biber,style=numeric]{biblatex}
 \usepackage{SUtheme}
 \usepackage{mathtools}
 \usepackage{bm}
 \usepackage{bbm}
 
 \usepackage{mwe} % for placeholder images
-% notes
-\usepackage[color=pink]{todonotes}
-\usepackage{marginnote}
-\let\marginpar\marginnote
-
-\addbibresource{refs.bib}
 
 % set theme parameters
 \tikzposterlatexaffectionproofoff
@@ -64,6 +56,7 @@
 		several hundreds of constraints. Then, we test on TSP instances with instances of various sizes and see the generalization
 		the ability of this novel approach.
 	}
+
 	\block{The Basics of GNN}{
 		\textbf{A graph neural network (GNN)} is a class of neural networks for processing data best represented by graph structures.
 		They were popularized by their use in supervised learning on properties of various molecules from the nature of this task: 3d graph
@@ -88,8 +81,7 @@
 			\end{minipage}
 		\end{center}
 	}
-	% NEW COLUMN
-	%\column{0.36}
+
 	\block{Problem Formulation}{
 		\textbf{One way} to formulate TSP is by \textbf{Integer Linear Programming}. Given an undirected weighted graph \(\mathcal{G} = (\mathcal{E}, \mathcal{V})\)
 		with nodes being \(1, \ldots, n\), and define
@@ -111,7 +103,7 @@
 		\]
 		are two additional constraints in two sub-problems respectively. This gives us a recursive algorithm called \textbf{Branch and Bound}.
 	}
-	% NEW COLUMN
+
 	\column{0.4}
 	\block{Learning Algorithm}{
 	\textbf{A good branching} decision can reduce the sub-problem size, hence the solving time significantly since we
@@ -152,6 +144,7 @@
 	Ecole to do the evaluation. We configure \texttt{SCIP} to its default strategy and compare the result to our learned branching
 	strategy by looking at the time needed to solve this particular TSP instance.
 	}
+
 	\column{0.3}
 	\block{Experimental Result}{
 		We test the generalization ability of our model trained with TSP15 on various sizes TSP

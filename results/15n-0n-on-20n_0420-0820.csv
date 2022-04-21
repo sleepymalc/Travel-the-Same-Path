@@ -609,3 +609,6 @@ internal:relpscost,545,transfer-large,data/tsp20/instances/transfer_40n/instance
 gnn:supervised,545,transfer-large,data/tsp20/instances/transfer_40n/instance_38.lp,439605,376422,3600.0,0.18782674623836618,timelimit,3904.046522689052,3894.6998541389985
 internal:relpscost,545,transfer-large,data/tsp20/instances/transfer_40n/instance_54.lp,415344,356059,3600.0,0.1901530093479633,timelimit,3885.2887861402705,3875.955655469006
 gnn:supervised,545,transfer-large,data/tsp20/instances/transfer_40n/instance_54.lp,438386,375468,3600.0,0.18789825945921035,timelimit,3903.0258768969215,3893.6833991670064
+internal:relpscost,545,transfer-large,data/tsp20/instances/transfer_40n/instance_2.lp,398790,341893,3600.0,0.1914606787964417,timelimit,3876.802251096815,3867.464027793998
+gnn:supervised,545,transfer-large,data/tsp20/instances/transfer_40n/instance_2.lp,420955,360912,3600.0,0.18964310278552488,timelimit,3894.0141186406836,3884.724057792002
+internal:relpscost,545,transfer-large,data/tsp20/instances/transfer_40n/instance_87.lp,398367,341543,3600.0,0.19153713363549987,timelimit,3875.7974456339143,3866.473186299001
