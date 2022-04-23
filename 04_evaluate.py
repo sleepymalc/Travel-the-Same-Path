@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     instances = [{
         'type': f'tsp{tsp_size}',
-        'path': f"data/instances/tsp{tsp_size}/test/instance_{i+1}.lp"
+        'path': f"data/tsp{tsp_size}/instances/test/instance_{i+1}.lp"
     } for i in range(normal_size)]
 
     # SCIP internal brancher baselines
