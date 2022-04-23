@@ -109,23 +109,19 @@ These flags mean:
 
 After running this, the data set should look like the following
 
-```bash
+```json
 ---EECS545-Project
- |
  |---data
- |     |
  |     |-tsp15
  |     |    |-instances
  |     |    |   |-test
  |     |    |   |-train
  |     |    |   |-valid
- |     |    |   
  |     |    |-samples
  |     |        |-train
  |     |        |-valid
  |     |-tsp20
  |     |-tsp25
- |
  |--- ...
  .
  .
