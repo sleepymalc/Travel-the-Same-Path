@@ -4,7 +4,7 @@ import argparse
 import parameters
 import csv
 from docplex.mp.model import Model
-from concorde.tsp import TSPSolver
+#from concorde.tsp import TSPSolver
 import time
 
 
@@ -48,6 +48,30 @@ if __name__ == '__main__':
         default=15,
     )
 
+    parser.add_argument(
+        '-t',
+        '--train_num',
+        help='training set number',
+        type=int,
+        default=10000,
+    )
+
+    parser.add_argument(
+        '-t',
+        '--valid_num',
+        help='validation set number',
+        type=int,
+        default=2000,
+    )
+
+    parser.add_argument(
+        '-t',
+        '--test_num',
+        help='testing set number',
+        type=int,
+        default=100,
+    )
+
     args = parser.parse_args()
 
     tsp_size = int(args.num)
@@ -61,7 +85,7 @@ if __name__ == '__main__':
 
     # test instances
     n = parameters.test_instance
-    num = int(tsp_size)
+    num = int(args.test_num)
     lp_dir = f'data/tsp{tsp_size}/instances/test_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
@@ -69,7 +93,7 @@ if __name__ == '__main__':
     nums.extend([num] * n)
 
     # train instances
-    n = parameters.train_instance
+    n = int(args.train_num)
     lp_dir = f'data/tsp{tsp_size}/instances/train_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
@@ -77,35 +101,8 @@ if __name__ == '__main__':
     nums.extend([num] * n)
 
     # validation instances
-    n = parameters.valid_instance
+    n = int(args.valid_num)
     lp_dir = f'data/tsp{tsp_size}/instances/valid_{num}n'
-    print(f"{n} instances in {lp_dir}")
-    os.makedirs(lp_dir)
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([num] * n)
-
-    # small transfer instances
-    n = parameters.transfer_instance
-    num = int(tsp_size / 2)
-    lp_dir = f'data/tsp{tsp_size}/instances/transfer_{num}n'
-    print(f"{n} instances in {lp_dir}")
-    os.makedirs(lp_dir)
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([num] * n)
-
-    # medium transfer instances
-    n = parameters.transfer_instance
-    num = int(tsp_size / 1.5)
-    lp_dir = f'data/tsp{tsp_size}/instances/transfer_{num}n'
-    print(f"{n} instances in {lp_dir}")
-    os.makedirs(lp_dir)
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([num] * n)
-
-    # big transfer instances
-    n = parameters.transfer_instance
-    num = int(tsp_size * 2)
-    lp_dir = f'data/tsp{tsp_size}/instances/transfer_{num}n'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
