@@ -294,13 +294,6 @@ if __name__ == '__main__':
         default=10000,
     )
 
-    parser.add_argument(
-        '-s',
-        '--test_num',
-        help='testing set number',
-        type=int,
-        default=500,
-    )
     args = parser.parse_args()
     n = int(args.nums)
 
@@ -308,19 +301,16 @@ if __name__ == '__main__':
 
     train_size = int(args.train_num)
     valid_size = int(args.valid_num)
-    test_size = int(args.test_num)
     node_record_prob = float(args.probability)
     time_limit = parameters.time_limit
 
     instances_train = glob.glob(f'data/tsp{n}/instances/train/*.lp')
     instances_valid = glob.glob(f'data/tsp{n}/instances/valid/*.lp')
-    instances_test = glob.glob(f'data/tsp{n}/instances/test/*.lp')
     out_dir = f'data/tsp{n}/samples'
 
     print(f'node record probability: {node_record_prob}')
     print(f"{len(instances_train)} train instances for {train_size} samples")
     print(f"{len(instances_valid)} validation instances for {valid_size} samples")
-    print(f"{len(instances_test)} test instances for {test_size} samples")
 
     # create output directory, throws an error if it already exists
     os.makedirs(out_dir, exist_ok=True)
@@ -337,15 +327,6 @@ if __name__ == '__main__':
     rng = np.random.RandomState(seed + 1)
     collect_samples(instances_valid,
                     out_dir + '/valid',
-                    rng,
-                    test_size,
-                    args.njobs,
-                    query_expert_prob=node_record_prob,
-                    time_limit=time_limit)
-
-    rng = np.random.RandomState(seed + 2)
-    collect_samples(instances_test,
-                    out_dir + '/test',
                     rng,
                     test_size,
                     args.njobs,
