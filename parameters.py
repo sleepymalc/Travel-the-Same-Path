@@ -17,9 +17,9 @@ time_limit = 3600
 train_instance = 10000
 valid_instance = 2000
 transfer_instance = 100
-test_instance = 2000
+test_instance = 100
 
 # 02_dataset
 train_size = 100000
 valid_size = 20000
-test_size = 20000
+test_size = 1000
