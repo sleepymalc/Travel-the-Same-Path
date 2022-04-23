@@ -26,9 +26,8 @@ if __name__ == "__main__":
     parser.add_argument(
         '-l',
         '--load',
-        help=
-        'load model from file. <imitation size>n-<reinforcement size>n. -1 if mixed trained model, 0 if train from scratch',
-        type=str,
+        help='load model from file. <imitation size>n.',
+        type=int,
         default=15,
     )
 
@@ -36,14 +35,6 @@ if __name__ == "__main__":
 
     ### HYPER PARAMETERS ###
     normal_size = 100
-    assert normal_size <= parameters.test_instance
-
-    transfer_size_s = 100
-    transfer_size_m = 100
-    transfer_size_l = 100
-    assert transfer_size_s <= parameters.transfer_instance
-    assert transfer_size_m <= parameters.transfer_instance
-    assert transfer_size_l <= parameters.transfer_instance
 
     seed = parameters.seed
 
@@ -51,35 +42,13 @@ if __name__ == "__main__":
     gnn_models = ['supervised']
     time_limit = 3600
     branching_policies = []
-    rng = np.random.RandomState(parameters.seed)
     tsp_size = int(args.num)
-    imitation_size, reinforcement_size = int(args.load.split('-')[0][:-1]), int(args.load.split('-')[1][:-1])
+    imitation_size = int(args.load)
 
-    instances = rng.choice([{
+    instances = [{
         'type': f'tsp{tsp_size}',
-        'path': f"data/tsp{tsp_size}/instances/test_{tsp_size}n/instance_{i+1}.lp"
-    } for i in range(parameters.test_instance)],
-                           size=normal_size,
-                           replace=True).tolist()
-
-    instances += rng.choice([{
-        'type': 'transfer-small',
-        'path': f"data/tsp{tsp_size}/instances/transfer_{int(tsp_size / 2)}n/instance_{i+1}.lp"
-    } for i in range(parameters.transfer_instance)],
-                            size=transfer_size_s,
-                            replace=True).tolist()
-    instances += rng.choice([{
-        'type': 'transfer-medium',
-        'path': f"data/tsp{tsp_size}/instances/transfer_{int(tsp_size / 1.5)}n/instance_{i+1}.lp"
-    } for i in range(parameters.transfer_instance)],
-                            size=transfer_size_m,
-                            replace=True).tolist()
-    instances += rng.choice([{
-        'type': 'transfer-large',
-        'path': f"data/tsp{tsp_size}/instances/transfer_{int(tsp_size * 2)}n/instance_{i+1}.lp"
-    } for i in range(parameters.transfer_instance)],
-                            size=transfer_size_l,
-                            replace=True).tolist()
+        'path': f"data/instances/tsp{tsp_size}/test/instance_{i+1}.lp"
+    } for i in range(normal_size)]
 
     # SCIP internal brancher baselines
     for brancher in internal_branchers:
@@ -120,32 +89,8 @@ if __name__ == "__main__":
                 ### MODEL LOADING ###
                 model = GNNPolicy().to(device)
                 if policy['name'] == 'supervised':
-                    if imitation_size == 0:
-                        if reinforcement_size == 0:
-                            raise Exception(f"{policy['name']} model not trained")
-                        elif reinforcement_size == -1:
-                            ## trained on mixed size tsp with reinforcement learning only
-                            pass
-                        else:
-                            ## trained on fixed size tsp with reinforcement learning only
-                            model.load_state_dict(
-                                torch.load(f"model/reinforce/{reinforcement_size}n/train_params.pkl",
-                                           map_location=device))
-                    elif imitation_size == -1:
-                        pass
-                    else:
-                        if reinforcement_size == 0:
-                            ## trained on fixed size tsp with imitation learning only
-                            model.load_state_dict(
-                                torch.load(f"model/imitation/{imitation_size}n/train_params.pkl", map_location=device))
-                        elif reinforcement_size == -1:
-                            ## trained on fixed size tsp with imitation learning, then mixed size reinforcement learning
-                            pass
-                        else:
-                            ## trained on fixed size tsp with imitation learning, then fixed size reinforcement learning
-                            model.load_state_dict(
-                                torch.load(f"model/imitation/{imitation_size}n-{reinforcement_size}n/train_params.pkl",
-                                           map_location=device))
+                    model.load_state_dict(
+                        torch.load(f"model/imitation/{imitation_size}n/train_params.pkl", map_location=device))
                 else:
                     raise Exception(f"Unrecognized GNN policy {policy['name']}")
 
