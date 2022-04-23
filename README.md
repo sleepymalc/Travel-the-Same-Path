@@ -1,4 +1,4 @@
-# README
+# ***Travel the Same Path(TSP)***, A Novel Strategy to Solve TSP
 
 ## Setup
 
@@ -110,7 +110,7 @@ These flags mean:
 After running this, the data set should look like the following
 
 ```
----EECS545-Project
+---Travel-the-Same-Path
  |---data
  |     |-tsp15
  |     |    |-instances
