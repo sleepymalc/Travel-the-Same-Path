@@ -113,8 +113,6 @@ if __name__ == "__main__":
     tsp_size = int(args.num)
     load_size = int(args.load_n)
 
-    assert load_size != tsp_size, "load_size and tsp_size must be different (data reason)"
-
     running_dir = f"model/imitation/{tsp_size}n"
 
     os.makedirs(running_dir, exist_ok=True)
