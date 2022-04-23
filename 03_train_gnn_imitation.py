@@ -35,10 +35,11 @@ def process(policy, data_loader, top_k=[1, 3, 5, 10], optimizer=None):
             logits = pad_tensor(logits[batch.candidates], batch.nb_candidates)
             cross_entropy_loss = F.cross_entropy(logits, batch.candidate_choices, reduction='mean')
             entropy = (-F.softmax(logits, dim=-1) * F.log_softmax(logits, dim=-1)).sum(-1).mean()
-            if not torch.isnan(cross_entropy_loss):
-                loss = cross_entropy_loss - entropy_bonus * entropy
-            else:
-                continue
+            loss = cross_entropy_loss - entropy_bonus * entropy
+            # if not torch.isnan(cross_entropy_loss):
+            #     loss = cross_entropy_loss - entropy_bonus * entropy
+            # else:
+            #     continue
 
             if optimizer is not None:
                 optimizer.zero_grad()
@@ -90,7 +91,6 @@ if __name__ == "__main__":
         default=15,
     )
 
-    # haven't used
     parser.add_argument(
         '-l',
         '--load_n',
@@ -106,11 +106,12 @@ if __name__ == "__main__":
     batch_size = 32
     pretrain_batch_size = 128
     valid_batch_size = 128
-    lr = 1e-9
+    lr = 1e-8
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
     tsp_size = int(args.num)
+    load_size = int(args.load_n)
 
     running_dir = f"model/imitation/{tsp_size}n"
 
@@ -161,6 +162,8 @@ if __name__ == "__main__":
     valid_data = GraphDataset(valid_files)
     valid_loader = torch_geometric.loader.DataLoader(valid_data, valid_batch_size, shuffle=False)
 
+    if not load_size > 0:
+        policy.load_state_dict(torch.load(f"model/imitation/{load_size}n/train_params.pkl", map_location=device))
     for epoch in range(max_epochs + 1):
         log(f"EPOCH {epoch}...", logfile)
         if epoch == 0:
