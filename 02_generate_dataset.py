@@ -312,9 +312,9 @@ if __name__ == '__main__':
     node_record_prob = float(args.probability)
     time_limit = parameters.time_limit
 
-    instances_train = glob.glob(f'data/tsp{n}/instances/train_{n}n/*.lp')
-    instances_valid = glob.glob(f'data/tsp{n}/instances/valid_{n}n/*.lp')
-    instances_test = glob.glob(f'data/tsp{n}/instances/test_{n}n/*.lp')
+    instances_train = glob.glob(f'data/tsp{n}/instances/train/*.lp')
+    instances_valid = glob.glob(f'data/tsp{n}/instances/valid/*.lp')
+    instances_test = glob.glob(f'data/tsp{n}/instances/test/*.lp')
     out_dir = f'data/tsp{n}/samples'
 
     print(f'node record probability: {node_record_prob}')
