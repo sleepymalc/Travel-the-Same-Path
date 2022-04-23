@@ -64,7 +64,8 @@ if __name__ == "__main__":
             'name': model,
         })
 
-    print(f"tsp size: {args.load}")
+    print(f"tsp size tested on: {tsp_size}")
+    print(f"tsp size trained on: {imitation_size}")
     print(f"gpu: {args.gpu}")
     print(f"time limit: {time_limit} s")
 
