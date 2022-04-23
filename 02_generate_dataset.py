@@ -261,21 +261,21 @@ if __name__ == '__main__':
         '--njobs',
         help='Number of parallel jobs.',
         type=int,
-        default=1,
+        default=8,
     )
     parser.add_argument(
         '-p',
         '--probability',
         help='Node record probability',
         type=float,
-        default=0.5,
+        default=0.1,
     )
     parser.add_argument(
         '-n',
         '--nums',
         help='Number of nodes.',
         type=int,
-        default=20,
+        default=15,
     )
 
     parser.add_argument(
@@ -283,7 +283,7 @@ if __name__ == '__main__':
         '--train_num',
         help='training set number',
         type=int,
-        default=10000,
+        default=50000,
     )
 
     parser.add_argument(
@@ -291,7 +291,7 @@ if __name__ == '__main__':
         '--valid_num',
         help='validation set number',
         type=int,
-        default=2000,
+        default=10000,
     )
 
     parser.add_argument(
@@ -299,7 +299,7 @@ if __name__ == '__main__':
         '--test_num',
         help='testing set number',
         type=int,
-        default=100,
+        default=500,
     )
     args = parser.parse_args()
     n = int(args.nums)
