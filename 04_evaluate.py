@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '-l',
         '--load',
-        help='load model from file. <imitation size>n.',
+        help='load model trained on the size specified.',
         type=int,
         default=15,
     )
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     internal_branchers = ['relpscost']
     gnn_models = ['supervised']
-    time_limit = 3600
+    time_limit = parameters.time_limit
     branching_policies = []
     tsp_size = int(args.num)
     imitation_size = int(args.load)
