@@ -328,7 +328,7 @@ if __name__ == '__main__':
     collect_samples(instances_valid,
                     out_dir + '/valid',
                     rng,
-                    test_size,
+                    valid_size,
                     args.njobs,
                     query_expert_prob=node_record_prob,
                     time_limit=time_limit)
