@@ -277,14 +277,38 @@ if __name__ == '__main__':
         type=int,
         default=20,
     )
+
+    parser.add_argument(
+        '-t',
+        '--train_num',
+        help='training set number',
+        type=int,
+        default=10000,
+    )
+
+    parser.add_argument(
+        '-v',
+        '--valid_num',
+        help='validation set number',
+        type=int,
+        default=2000,
+    )
+
+    parser.add_argument(
+        '-s',
+        '--test_num',
+        help='testing set number',
+        type=int,
+        default=100,
+    )
     args = parser.parse_args()
     n = int(args.nums)
 
     seed = parameters.seed
 
-    train_size = parameters.train_size
-    valid_size = parameters.valid_size
-    test_size = parameters.test_size
+    train_size = int(args.train_num)
+    valid_size = int(args.valid_num)
+    test_size = int(args.test_num)
     node_record_prob = float(args.probability)
     time_limit = parameters.time_limit
 
