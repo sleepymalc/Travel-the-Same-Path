@@ -75,7 +75,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     tsp_size = int(args.num)
-    num = tsp_size
     seed = parameters.seed
     random = np.random
     random.seed(seed)
@@ -84,29 +83,28 @@ if __name__ == '__main__':
     nums = []
 
     # test instances
-    n = parameters.test_instance
-    num = int(args.test_num)
-    lp_dir = f'data/tsp{tsp_size}/instances/test_{num}n'
+    n = int(args.test_num)
+    lp_dir = f'data/tsp{tsp_size}/instances/test'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([num] * n)
+    nums.extend([tsp_size] * n)
 
     # train instances
     n = int(args.train_num)
-    lp_dir = f'data/tsp{tsp_size}/instances/train_{num}n'
+    lp_dir = f'data/tsp{tsp_size}/instances/train'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([num] * n)
+    nums.extend([tsp_size] * n)
 
     # validation instances
     n = int(args.valid_num)
-    lp_dir = f'data/tsp{tsp_size}/instances/valid_{num}n'
+    lp_dir = f'data/tsp{tsp_size}/instances/valid'
     print(f"{n} instances in {lp_dir}")
     os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([num] * n)
+    nums.extend([tsp_size] * n)
 
     # actually generate the instances
     for filename, num in zip(filenames, nums):
