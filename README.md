@@ -1,4 +1,4 @@
-# ***Travel the Same Path(TSP)***, A Novel Strategy to Solve TSP
+# ***Travel the Same Path(TSP)***, A Novel TSP Solving Strategy
 
 ## Setup
 
