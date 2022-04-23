@@ -57,7 +57,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '-t',
+        '-v',
         '--valid_num',
         help='validation set number',
         type=int,
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '-t',
+        '-s',
         '--test_num',
         help='testing set number',
         type=int,
