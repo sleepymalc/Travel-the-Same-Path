@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     29774,        719]
-NotebookOptionsPosition[     29065,        698]
-NotebookOutlinePosition[     29459,        714]
-CellTagsIndexPosition[     29416,        711]
+NotebookDataLength[     29974,        722]
+NotebookOptionsPosition[     29265,        701]
+NotebookOutlinePosition[     29659,        717]
+CellTagsIndexPosition[     29616,        714]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -33,27 +33,27 @@ Same-Path/results/concorde/50n_0423-1647.csv\>\"", ",", " ",
   RowBox[{
    RowBox[{"concorde", "=", 
     RowBox[{"Delete", "[", 
-     RowBox[{"concorde", ",", "1"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+     RowBox[{"concorde", ",", "1"}], "]"}]}], ";"}], "\n", 
   RowBox[{"(*", 
    RowBox[{"{", 
     RowBox[{"stime", "|", "walltime", "|", "proctime"}], "}"}], 
-   "*)"}]}], "\n", 
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"SOTA", "=", 
+  RowBox[{"concorde", "=", 
    RowBox[{
     RowBox[{
      RowBox[{"Part", "[", 
       RowBox[{"#", ",", "2"}], "]"}], "&"}], "/@", "concorde"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"SOTA", "=", 
-   RowBox[{"Sort", "[", "SOTA", "]"}]}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"concorde", "=", 
+   RowBox[{"Sort", "[", "concorde", "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"plot", "=", 
   RowBox[{"Show", "[", "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"ListPlot", "[", 
      RowBox[{
-      RowBox[{"{", "SOTA", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"{", "concorde", "}"}], ",", "\[IndentingNewLine]", 
       RowBox[{"Frame", "->", "True"}], ",", " ", 
       RowBox[{"FrameLabel", "->", 
        RowBox[{"{", 
@@ -79,12 +79,12 @@ Same-Path/results/concorde/50n_0423-1647.csv\>\"", ",", " ",
          RowBox[{"Max", "[", 
           RowBox[{
            RowBox[{"Floor", "[", 
-            RowBox[{"Min", "[", "SOTA", "]"}], "]"}], ",", "0"}], "]"}], ",", 
-         
+            RowBox[{"Min", "[", "concorde", "]"}], "]"}], ",", "0"}], "]"}], 
+         ",", 
          RowBox[{
           RowBox[{"Ceiling", "[", 
-           RowBox[{"Max", "[", "SOTA", "]"}], "]"}], "+", "1"}]}], "}"}]}], 
-      "}"}]}], ",", "\[IndentingNewLine]", 
+           RowBox[{"Max", "[", "concorde", "]"}], "]"}], "+", "1"}]}], 
+        "}"}]}], "}"}]}], ",", "\[IndentingNewLine]", 
     RowBox[{"PlotLabel", "->", 
      RowBox[{"Style", "[", "\"\<TSP50\>\"", "]"}]}], ",", 
     "\[IndentingNewLine]", 
@@ -98,9 +98,10 @@ Same-Path/results/concorde/50n_0423-1647.csv\>\"", ",", " ",
    "\"\</Users/pbb/University/UM/Junior/2022WN/EECS545/Project/Travel-the-\
 Same-Path/results/Plots/Concorde/tsp50.png\>\"", ",", "plot"}], "]"}], 
   ";"}]}], "Input",
- CellChangeTimes->{{3.8597359385758553`*^9, 3.8597360182473*^9}},
+ CellChangeTimes->{{3.8597359385758553`*^9, 3.8597360182473*^9}, {
+  3.859739050921917*^9, 3.859739050928514*^9}},
  CellLabel->
-  "In[658]:=",ExpressionUUID->"b9ed569b-024d-47fe-83b6-10b1477a4cf7"],
+  "In[745]:=",ExpressionUUID->"b9ed569b-024d-47fe-83b6-10b1477a4cf7"],
 
 Cell[BoxData[
  TagBox[
@@ -352,9 +353,10 @@ phnu68S/h1KBfzngDDw=
   Editable->True,
   SelectWithContents->False,
   Selectable->True]], "Output",
- CellChangeTimes->{{3.859736010279216*^9, 3.8597360185120487`*^9}},
+ CellChangeTimes->{{3.859736010279216*^9, 3.8597360185120487`*^9}, 
+   3.859739053322015*^9},
  CellLabel->
-  "Out[662]=",ExpressionUUID->"c9746e3c-42eb-4802-a962-b4e6b0f5baeb"]
+  "Out[749]=",ExpressionUUID->"e2ab3c51-ae0f-41d6-acf8-e00f3eb97ceb"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -372,27 +374,27 @@ Same-Path/results/concorde/100n_0423-1653.csv\>\"", ",", " ",
   RowBox[{
    RowBox[{"concorde", "=", 
     RowBox[{"Delete", "[", 
-     RowBox[{"concorde", ",", "1"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+     RowBox[{"concorde", ",", "1"}], "]"}]}], ";"}], "\n", 
   RowBox[{"(*", 
    RowBox[{"{", 
     RowBox[{"stime", "|", "walltime", "|", "proctime"}], "}"}], 
-   "*)"}]}], "\n", 
+   "*)"}]}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"SOTA", "=", 
+  RowBox[{"concorde", "=", 
    RowBox[{
     RowBox[{
      RowBox[{"Part", "[", 
       RowBox[{"#", ",", "2"}], "]"}], "&"}], "/@", "concorde"}]}], 
   ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"SOTA", "=", 
-   RowBox[{"Sort", "[", "SOTA", "]"}]}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"concorde", "=", 
+   RowBox[{"Sort", "[", "concorde", "]"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"plot", "=", 
   RowBox[{"Show", "[", "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"ListPlot", "[", 
      RowBox[{
-      RowBox[{"{", "SOTA", "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"{", "concorde", "}"}], ",", "\[IndentingNewLine]", 
       RowBox[{"Frame", "->", "True"}], ",", " ", 
       RowBox[{"FrameLabel", "->", 
        RowBox[{"{", 
@@ -418,12 +420,12 @@ Same-Path/results/concorde/100n_0423-1653.csv\>\"", ",", " ",
          RowBox[{"Max", "[", 
           RowBox[{
            RowBox[{"Floor", "[", 
-            RowBox[{"Min", "[", "SOTA", "]"}], "]"}], ",", "0"}], "]"}], ",", 
-         
+            RowBox[{"Min", "[", "concorde", "]"}], "]"}], ",", "0"}], "]"}], 
+         ",", 
          RowBox[{
           RowBox[{"Ceiling", "[", 
-           RowBox[{"Max", "[", "SOTA", "]"}], "]"}], "+", "1"}]}], "}"}]}], 
-      "}"}]}], ",", "\[IndentingNewLine]", 
+           RowBox[{"Max", "[", "concorde", "]"}], "]"}], "+", "1"}]}], 
+        "}"}]}], "}"}]}], ",", "\[IndentingNewLine]", 
     RowBox[{"PlotLabel", "->", 
      RowBox[{"Style", "[", "\"\<TSP100\>\"", "]"}]}], ",", 
     "\[IndentingNewLine]", 
@@ -437,9 +439,10 @@ Same-Path/results/concorde/100n_0423-1653.csv\>\"", ",", " ",
    "\"\</Users/pbb/University/UM/Junior/2022WN/EECS545/Project/Travel-the-\
 Same-Path/results/Plots/Concorde/tsp100.png\>\"", ",", "plot"}], "]"}], 
   ";"}]}], "Input",
- CellChangeTimes->{{3.859736095611177*^9, 3.8597361088572073`*^9}},
+ CellChangeTimes->{{3.859736095611177*^9, 3.8597361088572073`*^9}, {
+  3.859739050932279*^9, 3.859739050936558*^9}},
  CellLabel->
-  "In[664]:=",ExpressionUUID->"8b076569-a9dd-4ba9-bf12-b53197a0ac5f"],
+  "In[751]:=",ExpressionUUID->"8b076569-a9dd-4ba9-bf12-b53197a0ac5f"],
 
 Cell[BoxData[
  TagBox[
@@ -691,13 +694,13 @@ D9urJ2a5h50vE3+4PzbvqJSQZf8FquogTQ==
   Editable->True,
   SelectWithContents->False,
   Selectable->True]], "Output",
- CellChangeTimes->{3.859736109799827*^9},
+ CellChangeTimes->{3.859736109799827*^9, 3.8597390555240498`*^9},
  CellLabel->
-  "Out[668]=",ExpressionUUID->"c3fcf1c8-78f3-444d-81b0-4735a30f4edf"]
+  "Out[755]=",ExpressionUUID->"2a05a9e4-ed2c-4e4d-9779-6bd2e5eb3af0"]
 }, Open  ]]
 },
 WindowSize->{1274, 1379},
-WindowMargins->{{Automatic, 4}, {Automatic, 4}},
+WindowMargins->{{4, Automatic}, {Automatic, 4}},
 FrontEndVersion->"12.1 for Mac OS X x86 (64-bit) (March 18, 2020)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"8174247d-5cab-4f1c-8347-311df08f6c61"
@@ -714,12 +717,12 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 2897, 80, 346, "Input",ExpressionUUID->"b9ed569b-024d-47fe-83b6-10b1477a4cf7"],
-Cell[3480, 104, 11310, 252, 423, "Output",ExpressionUUID->"c9746e3c-42eb-4802-a962-b4e6b0f5baeb"]
+Cell[580, 22, 2972, 81, 346, "Input",ExpressionUUID->"b9ed569b-024d-47fe-83b6-10b1477a4cf7"],
+Cell[3555, 105, 11336, 253, 400, "Output",ExpressionUUID->"e2ab3c51-ae0f-41d6-acf8-e00f3eb97ceb"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[14827, 361, 2902, 80, 346, "Input",ExpressionUUID->"8b076569-a9dd-4ba9-bf12-b53197a0ac5f"],
-Cell[17732, 443, 11317, 252, 405, "Output",ExpressionUUID->"c3fcf1c8-78f3-444d-81b0-4735a30f4edf"]
+Cell[14928, 363, 2977, 81, 367, "Input",ExpressionUUID->"8b076569-a9dd-4ba9-bf12-b53197a0ac5f"],
+Cell[17908, 446, 11341, 252, 405, "Output",ExpressionUUID->"2a05a9e4-ed2c-4e4d-9779-6bd2e5eb3af0"]
 }, Open  ]]
 }
 ]
