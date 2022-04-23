@@ -4,7 +4,7 @@ import argparse
 import parameters
 import csv
 from docplex.mp.model import Model
-#from concorde.tsp import TSPSolver
+from concorde.tsp import TSPSolver
 import time
 
 
@@ -82,70 +82,55 @@ if __name__ == '__main__':
     filenames = []
     nums = []
 
-    # test instances
-    n = int(args.test_num)
-    lp_dir = f'data/tsp{tsp_size}/instances/test'
-    print(f"{n} instances in {lp_dir}")
-    os.makedirs(lp_dir)
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([tsp_size] * n)
+    # # test instances
+    # n = int(args.test_num)
+    # lp_dir = f'data/tsp{tsp_size}/instances/test'
+    # print(f"{n} instances in {lp_dir}")
+    # os.makedirs(lp_dir)
+    # filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    # nums.extend([tsp_size] * n)
 
-    # train instances
-    n = int(args.train_num)
-    lp_dir = f'data/tsp{tsp_size}/instances/train'
-    print(f"{n} instances in {lp_dir}")
-    os.makedirs(lp_dir)
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([tsp_size] * n)
+    os.makedirs('results', exist_ok=True)
+    concorde_result = f"concorde/{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
+    with open(f"results/{concorde_result}", 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=['instance', ['walltime']])
+        # actually generate the instances
+        for filename, num in zip(filenames, nums):
+            print(f'  generating file {filename} ...')
+            cities = [i for i in range(num)]
+            edges = [(i, j) for i in cities for j in cities if i != j]
+            coord_x = random.rand(num) * 100
+            coord_y = random.rand(num) * 100
 
-    # validation instances
-    n = int(args.valid_num)
-    lp_dir = f'data/tsp{tsp_size}/instances/valid'
-    print(f"{n} instances in {lp_dir}")
-    os.makedirs(lp_dir)
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([tsp_size] * n)
+            start_time = time.time()
+            solver = TSPSolver.from_data(coord_x, coord_y, norm="GEO")
+            solution = solver.solve()
+            end_time = time.time() - start_time
+            writer.writerow({
+                'instance': filename,
+                'walltime': end_time,
+            })
+            csvfile.flush()
 
-    # actually generate the instances
-    for filename, num in zip(filenames, nums):
-        print(f'  generating file {filename} ...')
-        generate_tsp(n=num, filename=filename, random=random)
+    # # train instances
+    # n = int(args.train_num)
+    # lp_dir = f'data/tsp{tsp_size}/instances/train'
+    # print(f"{n} instances in {lp_dir}")
+    # os.makedirs(lp_dir)
+    # filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    # nums.extend([tsp_size] * n)
 
-    # os.makedirs('results', exist_ok=True)
-    # concorde_result = f"concorde_{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
-    # with open(f"results/{concorde_result}", 'w', newline='') as csvfile:
-    #     writer = csv.DictWriter(csvfile, fieldnames=['instance', ['walltime']])
-    #     # actually generate the instances
-    #     for filename, num in zip(filenames, nums):
-    #         print(f'  generating file {filename} ...')
-    #         cities = [i for i in range(num)]
-    #         edges = [(i, j) for i in cities for j in cities if i != j]
-    #         coord_x = random.rand(num) * 100
-    #         coord_y = random.rand(num) * 100
+    # # validation instances
+    # n = int(args.valid_num)
+    # lp_dir = f'data/tsp{tsp_size}/instances/valid'
+    # print(f"{n} instances in {lp_dir}")
+    # os.makedirs(lp_dir)
+    # filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    # nums.extend([tsp_size] * n)
 
-    #         start_time = time.time()
-    #         solver = TSPSolver.from_data(coord_x, coord_y, norm="GEO")
-    #         solution = solver.solve()
-    #         end_time = time.time() - start_time
-    #         writer.writerow({
-    #             'instance': filename,
-    #             'walltime': end_time,
-    #         })
-    #         csvfile.flush()
+    # # actually generate the instances
+    # for filename, num in zip(filenames, nums):
+    #     print(f'  generating file {filename} ...')
+    #     generate_tsp(n=num, filename=filename, random=random)
 
-    #         distances = {(i, j): np.hypot(coord_x[i] - coord_x[j], coord_y[i] - coord_y[j]) for i, j in edges}
-
-    #         mdl = Model('TSP')
-    #         x = mdl.binary_var_dict(edges, name='x')
-    #         d = mdl.continuous_var_dict(cities, name='d')
-    #         mdl.minimize(mdl.sum(distances[i] * x[i] for i in edges))
-    #         for c in cities:
-    #             mdl.add_constraint(mdl.sum(x[(i, j)] for i, j in edges if i == c) == 1, ctname='out_%d' % c)
-    #             mdl.add_constraint(mdl.sum(x[(i, j)] for i, j in edges if j == c) == 1, ctname='in_%d' % c)
-    #         for i, j in edges:
-    #             if j != 0:
-    #                 mdl.add_indicator(x[(i, j)], d[i] + 1 == d[j], name='order_(%d,_%d)' % (i, j))
-    #         print(filename)
-    #         mdl.export_as_lp(filename)
-
-    print('done.')
+    # print('done.')
