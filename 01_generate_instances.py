@@ -82,21 +82,22 @@ if __name__ == '__main__':
     filenames = []
     nums = []
 
-    # # test instances
-    # n = int(args.test_num)
-    # lp_dir = f'data/tsp{tsp_size}/instances/test'
+    # test instances
+    n = int(args.test_num)
+    lp_dir = f'data/tsp{tsp_size}/instances/test'
     # print(f"{n} instances in {lp_dir}")
     # os.makedirs(lp_dir)
-    # filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    # nums.extend([tsp_size] * n)
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([tsp_size] * n)
 
     os.makedirs('results', exist_ok=True)
     concorde_result = f"concorde/{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
     with open(f"results/{concorde_result}", 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=['instance', ['walltime']])
+        writer = csv.DictWriter(csvfile, fieldnames=['instance', 'walltime'])
+        writer.writeheader()
         # actually generate the instances
         for filename, num in zip(filenames, nums):
-            print(f'  generating file {filename} ...')
+            print(f'  evaluate {filename} by Concorde...')
             cities = [i for i in range(num)]
             edges = [(i, j) for i in cities for j in cities if i != j]
             coord_x = random.rand(num) * 100
