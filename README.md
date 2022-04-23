@@ -116,12 +116,11 @@ After running this, the data set should look like the following
  |     |
  |     |-tsp15
  |     |    |-instances
- |     |    |   |-test_15n
- |     |    |   |-train_15n
- |     |    |   ...
+ |     |    |   |-test
+ |     |    |   |-train
+ |     |    |   |-valid
  |     |    |   
  |     |    |-samples
- |     |        |-test
  |     |        |-train
  |     |        |-valid
  |     |-tsp20
@@ -145,17 +144,15 @@ python 03_train_gnn_imitation.py -n <tsp_size> -g <GPU id>
 
 where `-n` is the size you want to train on, and `-g` is to specify the `GPU id` used by `pytorch` with `CUDA`. 
 
-#### `04_train_gnn_reinforce.py`
-
-#### `05_evaluate.py`
+#### `04_evaluate.py`
 
 To evaluate our model performance, we use the following command. 
 
 ```bash
-python 05_evaluate.py -n <tsp_size> -g <GPU id> -l <imitation size>n-<reinforcement size>n
+python 05_evaluate.py -n <tsp_size> -g <GPU id> -l <imitation size>
 ```
 
-where `-n`, `-g` are the same flag as we saw, and `-l` is to specify which model we want to evaluate. For example, if one wants to evaluate the model which is only trained by imitation learning on `<im_tsp_size>`, then the argument of `-l` should be `<im_tsp_size>n-0n`. 
+where `-n`, `-g` are the same flag as we saw, and `-l` is to specify which model we want to evaluate. For example, if one wants to evaluate the model which is only trained by imitation learning on `<im_tsp_size>`, then the argument of `-l` should be `<im_tsp_size>` namely the size of tsp instances the model you want to load is trained on. 
 
 ## Note
 
