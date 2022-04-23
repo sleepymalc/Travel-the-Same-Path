@@ -106,12 +106,14 @@ if __name__ == "__main__":
     batch_size = 32
     pretrain_batch_size = 128
     valid_batch_size = 128
-    lr = 1e-8
+    lr = 1e-4
     entropy_bonus = 0.0
     top_k = [1, 3, 5, 10]
     seed = parameters.seed
     tsp_size = int(args.num)
     load_size = int(args.load_n)
+
+    assert load_size != tsp_size, "load_size and tsp_size must be different (data reason)"
 
     running_dir = f"model/imitation/{tsp_size}n"
 
@@ -162,11 +164,15 @@ if __name__ == "__main__":
     valid_data = GraphDataset(valid_files)
     valid_loader = torch_geometric.loader.DataLoader(valid_data, valid_batch_size, shuffle=False)
 
-    if not load_size > 0:
+    if load_size > 0:
+        log(f"Load model trained on tsp{load_size}", logfile)
         policy.load_state_dict(torch.load(f"model/imitation/{load_size}n/train_params.pkl", map_location=device))
     for epoch in range(max_epochs + 1):
         log(f"EPOCH {epoch}...", logfile)
         if epoch == 0:
+            if load_size > 0:
+                log(f"Skip Pretrain step", logfile)
+                continue
             n = pretrain(policy, pretrain_loader)
             log(f"PRETRAINED {n} LAYERS", logfile)
         else:
