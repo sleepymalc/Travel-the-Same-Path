@@ -109,7 +109,7 @@ These flags mean:
 
 After running this, the data set should look like the following
 
-```json
+```
 ---EECS545-Project
  |---data
  |     |-tsp15
