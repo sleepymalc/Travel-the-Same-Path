@@ -6,6 +6,7 @@ import time
 import parameters
 import ecole
 import pyscipopt
+from concorde.tsp import TSPSolver
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -200,3 +201,35 @@ if __name__ == "__main__":
                 print(
                     f"  {policy['type']}:{policy['name']} {seed} - {nnodes} nodes {nlps} lps {stime:.2f} ({walltime:.2f} wall {proctime:.2f} proc) s. {status}"
                 )
+
+    # Evaluate Concorde result
+    random = np.random
+    random.seed(seed)
+    filenames = []
+    nums = []
+    n = normal_size
+    lp_dir = f'data/tsp{tsp_size}/instances/test'
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([tsp_size] * n)
+
+    concorde_result = f"concorde/{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
+    with open(f"results/{concorde_result}", 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=['instance', 'walltime'])
+        writer.writeheader()
+        # actually generate the instances
+        for filename, num in zip(filenames, nums):
+            print(f'  evaluate {filename} by Concorde...')
+            cities = [i for i in range(num)]
+            edges = [(i, j) for i in cities for j in cities if i != j]
+            coord_x = random.rand(num) * 100
+            coord_y = random.rand(num) * 100
+
+            start_time = time.time()
+            solver = TSPSolver.from_data(coord_x, coord_y, norm="GEO")
+            solution = solver.solve()
+            end_time = time.time() - start_time
+            writer.writerow({
+                'instance': filename,
+                'walltime': end_time,
+            })
+            csvfile.flush()
