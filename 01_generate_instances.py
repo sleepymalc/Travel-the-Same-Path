@@ -2,10 +2,7 @@ import os
 import numpy as np
 import argparse
 import parameters
-import csv
 from docplex.mp.model import Model
-from concorde.tsp import TSPSolver
-import time
 
 
 def generate_tsp(n, filename, random):
@@ -85,53 +82,30 @@ if __name__ == '__main__':
     # test instances
     n = int(args.test_num)
     lp_dir = f'data/tsp{tsp_size}/instances/test'
-    # print(f"{n} instances in {lp_dir}")
-    # os.makedirs(lp_dir)
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
     filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
     nums.extend([tsp_size] * n)
 
-    os.makedirs('results', exist_ok=True)
-    concorde_result = f"concorde/{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
-    with open(f"results/{concorde_result}", 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=['instance', 'walltime'])
-        writer.writeheader()
-        # actually generate the instances
-        for filename, num in zip(filenames, nums):
-            print(f'  evaluate {filename} by Concorde...')
-            cities = [i for i in range(num)]
-            edges = [(i, j) for i in cities for j in cities if i != j]
-            coord_x = random.rand(num) * 100
-            coord_y = random.rand(num) * 100
+    # train instances
+    n = int(args.train_num)
+    lp_dir = f'data/tsp{tsp_size}/instances/train'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([tsp_size] * n)
 
-            start_time = time.time()
-            solver = TSPSolver.from_data(coord_x, coord_y, norm="GEO")
-            solution = solver.solve()
-            end_time = time.time() - start_time
-            writer.writerow({
-                'instance': filename,
-                'walltime': end_time,
-            })
-            csvfile.flush()
+    # validation instances
+    n = int(args.valid_num)
+    lp_dir = f'data/tsp{tsp_size}/instances/valid'
+    print(f"{n} instances in {lp_dir}")
+    os.makedirs(lp_dir)
+    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
+    nums.extend([tsp_size] * n)
 
-    # # train instances
-    # n = int(args.train_num)
-    # lp_dir = f'data/tsp{tsp_size}/instances/train'
-    # print(f"{n} instances in {lp_dir}")
-    # os.makedirs(lp_dir)
-    # filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    # nums.extend([tsp_size] * n)
+    # actually generate the instances
+    for filename, num in zip(filenames, nums):
+        print(f'  generating file {filename} ...')
+        generate_tsp(n=num, filename=filename, random=random)
 
-    # # validation instances
-    # n = int(args.valid_num)
-    # lp_dir = f'data/tsp{tsp_size}/instances/valid'
-    # print(f"{n} instances in {lp_dir}")
-    # os.makedirs(lp_dir)
-    # filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    # nums.extend([tsp_size] * n)
-
-    # # actually generate the instances
-    # for filename, num in zip(filenames, nums):
-    #     print(f'  generating file {filename} ...')
-    #     generate_tsp(n=num, filename=filename, random=random)
-
-    # print('done.')
+    print('done.')
