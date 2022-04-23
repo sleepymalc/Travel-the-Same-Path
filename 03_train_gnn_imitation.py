@@ -85,7 +85,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '-n',
         '--num',
-        help='tsp size train on. -1 if mixed training',
+        help='tsp size train on.',
         type=int,
         default=15,
     )
@@ -111,10 +111,7 @@ if __name__ == "__main__":
     seed = parameters.seed
     tsp_size = int(args.num)
 
-    if tsp_size == -1:
-        running_dir = f"model/imitation/mixed"
-    else:
-        running_dir = f"model/imitation/{tsp_size}n"
+    running_dir = f"model/imitation/{tsp_size}n"
 
     os.makedirs(running_dir, exist_ok=True)
 
