@@ -205,22 +205,16 @@ if __name__ == "__main__":
     # Evaluate Concorde result
     random = np.random
     random.seed(seed)
-    filenames = []
-    nums = []
-    n = normal_size
-    lp_dir = f'data/tsp{tsp_size}/instances/test'
-    filenames.extend([os.path.join(lp_dir, f'instance_{i+1}.lp') for i in range(n)])
-    nums.extend([tsp_size] * n)
 
-    concorde_result = f"concorde/{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv"
-    with open(f"results/{concorde_result}", 'w', newline='') as csvfile:
+    n = normal_size
+    filenames = [os.path.join(f'data/tsp{tsp_size}/instances/test', f'instance_{i+1}.lp') for i in range(n)]
+    nums = [tsp_size] * n
+    with open(f"results/concorde/{tsp_size}n_{time.strftime('%m%d-%H%M')}.csv", 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=['instance', 'walltime'])
         writer.writeheader()
         # actually generate the instances
         for filename, num in zip(filenames, nums):
             print(f'  evaluate {filename} by Concorde...')
-            cities = [i for i in range(num)]
-            edges = [(i, j) for i in cities for j in cities if i != j]
             coord_x = random.rand(num) * 100
             coord_y = random.rand(num) * 100
 
