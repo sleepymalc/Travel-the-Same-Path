@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     87919,       1979]
-NotebookOptionsPosition[     86820,       1954]
-NotebookOutlinePosition[     87214,       1970]
-CellTagsIndexPosition[     87171,       1967]
+NotebookDataLength[     88134,       1969]
+NotebookOptionsPosition[     87035,       1944]
+NotebookOutlinePosition[     87429,       1960]
+CellTagsIndexPosition[     87386,       1957]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -183,9 +183,8 @@ Same-Path/results/Plots/15-20/normal.png\>\"", ",", "plot"}], "]"}], ";",
    3.859704552436445*^9, 3.8597045695834093`*^9}, 3.85972665530335*^9, {
    3.859727634989572*^9, 3.859727646585374*^9}, 3.859728423279086*^9, {
    3.859735490617992*^9, 3.8597355048014517`*^9}, {3.8597390337268057`*^9, 
-   3.8597390337328453`*^9}, {3.860100018012928*^9, 
-   3.860100020126495*^9}},ExpressionUUID->"c0141252-4a04-44d0-8d08-\
-2fb207fcd8a9"],
+   3.8597390337328453`*^9}, {3.860100018012928*^9, 3.860100020126495*^9}},
+ CellLabel->"In[37]:=",ExpressionUUID->"c0141252-4a04-44d0-8d08-2fb207fcd8a9"],
 
 Cell[BoxData[
  TagBox[
@@ -397,9 +396,8 @@ O9h/NcrxJ8TBTF/qLwz5BYY=
                     0.4731986666666667], FrameTicks -> None, PlotRangePadding -> 
                     None, ImageSize -> 
                     Dynamic[{
-                    Automatic, 
-                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
-                    Magnification])}]], 
+                    Automatic, 1.35 CurrentValue["FontCapHeight"]/
+                    AbsoluteCurrentValue[Magnification]}]], 
                     StyleBox[
                     RowBox[{"RGBColor", "[", 
                     RowBox[{"0.368417`", ",", "0.506779`", ",", "0.709798`"}],
@@ -445,9 +443,8 @@ O9h/NcrxJ8TBTF/qLwz5BYY=
                     0.587148, 0.40736066666666665`, 0.09470066666666668], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
                     Dynamic[{
-                    Automatic, 
-                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
-                    Magnification])}]], 
+                    Automatic, 1.35 CurrentValue["FontCapHeight"]/
+                    AbsoluteCurrentValue[Magnification]}]], 
                     StyleBox[
                     RowBox[{"RGBColor", "[", 
                     RowBox[{"0.880722`", ",", "0.611041`", ",", "0.142051`"}],
@@ -493,9 +490,8 @@ O9h/NcrxJ8TBTF/qLwz5BYY=
                     0.37345400000000006`, 0.461046, 0.12992333333333334`], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
                     Dynamic[{
-                    Automatic, 
-                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
-                    Magnification])}]], 
+                    Automatic, 1.35 CurrentValue["FontCapHeight"]/
+                    AbsoluteCurrentValue[Magnification]}]], 
                     StyleBox[
                     RowBox[{"RGBColor", "[", 
                     RowBox[{"0.560181`", ",", "0.691569`", ",", "0.194885`"}],
@@ -570,7 +566,7 @@ O9h/NcrxJ8TBTF/qLwz5BYY=
          Identity[
           Part[#, 2]]}& )}},
    PlotLabel->FormBox[
-     StyleBox["\"TSP15 to TSP10\"", StripOnInput -> False], TraditionalForm],
+     StyleBox["\"TSP15 to TSP20\"", StripOnInput -> False], TraditionalForm],
    PlotRange->{Automatic, {0, 1256}},
    PlotRangeClipping->True,
    PlotRangePadding->{{
@@ -679,7 +675,7 @@ O9h/NcrxJ8TBTF/qLwz5BYY=
           AbsoluteThickness[1.6], 
           PointSize[Medium]]}, {}, {}, {}, {}, {}, {}, {}}}, {{}, {}}}, {
      PlotRange -> {Automatic, {0, 1256}}, PlotLabel -> 
-      Style["TSP15 to TSP10"], AxesOrigin -> {0, 0}, ImageSize -> Large, 
+      Style["TSP15 to TSP20"], AxesOrigin -> {0, 0}, ImageSize -> Large, 
       DisplayFunction -> Identity, DisplayFunction -> Identity, AspectRatio -> 
       GoldenRatio^(-1), Axes -> {True, True}, AxesLabel -> {None, None}, 
       AxesOrigin -> {0., 0}, DisplayFunction :> Identity, 
@@ -731,16 +727,14 @@ O9h/NcrxJ8TBTF/qLwz5BYY=
   Selectable->True]], "Output",
  CellChangeTimes->{3.8597277181645813`*^9, 3.85972842564988*^9, 
   3.859728481407631*^9, 3.859735506016489*^9, 3.85973903660719*^9, 
-  3.8597392886184063`*^9},
- CellLabel->
-  "Out[829]=",ExpressionUUID->"99e3fd36-a100-4756-a19d-e9fe2b2b20ba"],
+  3.8597392886184063`*^9, 3.860100033697529*^9, 3.8601005698242493`*^9},
+ CellLabel->"Out[47]=",ExpressionUUID->"1ca4b510-4fda-4e76-8312-24f76cff5520"],
 
 Cell[BoxData["3.75128816750007`"], "Output",
  CellChangeTimes->{3.8597277181645813`*^9, 3.85972842564988*^9, 
   3.859728481407631*^9, 3.859735506016489*^9, 3.85973903660719*^9, 
-  3.8597392888194*^9},
- CellLabel->
-  "Out[830]=",ExpressionUUID->"1b9a9d98-0ae2-4029-ac14-6820ac0657a1"]
+  3.8597392886184063`*^9, 3.860100033697529*^9, 3.860100570022204*^9},
+ CellLabel->"Out[48]=",ExpressionUUID->"83f4e2a1-84d2-484b-9006-0e6c55aaaa8e"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -942,8 +936,8 @@ Same-Path/results/Plots/15-20/zoom-last20.png\>\"", ",", "plot2"}], "]"}],
   3.859728423283896*^9, 3.859728423284965*^9}, {3.859735474948483*^9, 
   3.859735479916291*^9}, {3.859739033735981*^9, 3.859739033742044*^9}, {
   3.859739293810111*^9, 3.859739293883876*^9}, {3.860100028294546*^9, 
-  3.8601000308518753`*^9}},ExpressionUUID->"813d812e-794c-4f82-84b2-\
-a684dbd709e6"],
+  3.8601000308518753`*^9}},
+ CellLabel->"In[49]:=",ExpressionUUID->"813d812e-794c-4f82-84b2-a684dbd709e6"],
 
 Cell[BoxData[
  TagBox[
@@ -1316,7 +1310,7 @@ j5obV9U/nClpPsfQ3//+4fS44kPmqqf9gX+Oqf7j5miR74ODl/IvGS+YP11m
          Identity[
           Part[#, 2]]}& )}},
    PlotLabel->FormBox[
-     StyleBox["\"TSP15 to TSP10 (Zoom)\"", StripOnInput -> False], 
+     StyleBox["\"TSP15 to TSP20 (Zoom)\"", StripOnInput -> False], 
      TraditionalForm],
    PlotRange->{Automatic, {0, 49}},
    PlotRangeClipping->True,
@@ -1416,7 +1410,7 @@ j5obV9U/nClpPsfQ3//+4fS44kPmqqf9gX+Oqf7j5miR74ODl/IvGS+YP11m
           AbsoluteThickness[1.6], 
           PointSize[Medium]]}, {}, {}, {}, {}, {}, {}, {}}}, {{}, {}}}, {
      PlotRange -> {Automatic, {0, 49}}, PlotLabel -> 
-      Style["TSP15 to TSP10 (Zoom)"], AxesOrigin -> {0, 0}, ImageSize -> 
+      Style["TSP15 to TSP20 (Zoom)"], AxesOrigin -> {0, 0}, ImageSize -> 
       Large, DisplayFunction -> Identity, DisplayFunction -> Identity, 
       AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, 
       AxesLabel -> {None, None}, AxesOrigin -> {0., 0}, DisplayFunction :> 
@@ -1468,16 +1462,14 @@ j5obV9U/nClpPsfQ3//+4fS44kPmqqf9gX+Oqf7j5miR74ODl/IvGS+YP11m
   Selectable->True]], "Output",
  CellChangeTimes->{3.859727720313136*^9, 3.85972842791663*^9, 
   3.8597284832056007`*^9, 3.859735507849496*^9, 3.859739038103052*^9, 
-  3.859739294674567*^9},
- CellLabel->
-  "Out[831]=",ExpressionUUID->"c4f5ffee-39da-4692-906d-97b1903029f3"],
+  3.859739294674567*^9, 3.860100034821947*^9, 3.860100571240912*^9},
+ CellLabel->"Out[49]=",ExpressionUUID->"662c01fa-34bf-479c-9fee-038f01966d20"],
 
 Cell[BoxData["6.581341911110091`"], "Output",
  CellChangeTimes->{3.859727720313136*^9, 3.85972842791663*^9, 
   3.8597284832056007`*^9, 3.859735507849496*^9, 3.859739038103052*^9, 
-  3.859739294874776*^9},
- CellLabel->
-  "Out[833]=",ExpressionUUID->"7d8b4631-df42-4e68-9aca-6455a0358ea1"],
+  3.859739294674567*^9, 3.860100034821947*^9, 3.860100571444578*^9},
+ CellLabel->"Out[51]=",ExpressionUUID->"542051ec-6d6d-4d8b-83b7-ee7b2159c4ce"],
 
 Cell[BoxData[
  TagBox[
@@ -1819,7 +1811,7 @@ oHxDML/j5moo3wjMzzgF4xuD+St2bYfyTcB8Ds+l9gAwEi/p
          Identity[
           Part[#, 2]]}& )}},
    PlotLabel->FormBox[
-     StyleBox["\"TSP15 to TSP10 (Zoom)\"", StripOnInput -> False], 
+     StyleBox["\"TSP15 to TSP20 (Zoom)\"", StripOnInput -> False], 
      TraditionalForm],
    PlotRange->{Automatic, {0, 1256}},
    PlotRangeClipping->True,
@@ -1888,7 +1880,7 @@ oHxDML/j5moo3wjMzzgF4xuD+St2bYfyTcB8Ds+l9gAwEi/p
           AbsoluteThickness[1.6], 
           PointSize[Medium]]}, {}, {}, {}, {}, {}, {}, {}}}, {{}, {}}}, {
      PlotRange -> {Automatic, {0, 1256}}, PlotLabel -> 
-      Style["TSP15 to TSP10 (Zoom)"], AxesOrigin -> {0, 0}, ImageSize -> 
+      Style["TSP15 to TSP20 (Zoom)"], AxesOrigin -> {0, 0}, ImageSize -> 
       Large, DisplayFunction -> Identity, DisplayFunction -> Identity, 
       AspectRatio -> GoldenRatio^(-1), Axes -> {True, True}, 
       AxesLabel -> {None, None}, AxesOrigin -> {0., 0}, DisplayFunction :> 
@@ -1940,16 +1932,14 @@ oHxDML/j5moo3wjMzzgF4xuD+St2bYfyTcB8Ds+l9gAwEi/p
   Selectable->True]], "Output",
  CellChangeTimes->{3.859727720313136*^9, 3.85972842791663*^9, 
   3.8597284832056007`*^9, 3.859735507849496*^9, 3.859739038103052*^9, 
-  3.859739294913403*^9},
- CellLabel->
-  "Out[834]=",ExpressionUUID->"42491b0d-9091-4520-afb3-d16dae5c19c1"],
+  3.859739294674567*^9, 3.860100034821947*^9, 3.860100571498692*^9},
+ CellLabel->"Out[52]=",ExpressionUUID->"91fdf3ff-2886-4124-ac35-973dcc26dfc7"],
 
 Cell[BoxData["2.963690895604611`"], "Output",
  CellChangeTimes->{3.859727720313136*^9, 3.85972842791663*^9, 
   3.8597284832056007`*^9, 3.859735507849496*^9, 3.859739038103052*^9, 
-  3.8597392951052628`*^9},
- CellLabel->
-  "Out[836]=",ExpressionUUID->"ca576b61-f0a6-4160-b01e-ab783774f74d"]
+  3.859739294674567*^9, 3.860100034821947*^9, 3.860100571703088*^9},
+ CellLabel->"Out[54]=",ExpressionUUID->"fbd5ffec-1317-4994-ae05-0f79dbb1ca14"]
 }, Open  ]]
 },
 WindowSize->{2552, 1379},
@@ -1970,16 +1960,16 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 5691, 165, 514, "Input",ExpressionUUID->"c0141252-4a04-44d0-8d08-2fb207fcd8a9"],
-Cell[6274, 189, 26085, 546, 395, "Output",ExpressionUUID->"99e3fd36-a100-4756-a19d-e9fe2b2b20ba"],
-Cell[32362, 737, 283, 5, 34, "Output",ExpressionUUID->"1b9a9d98-0ae2-4029-ac14-6820ac0657a1"]
+Cell[580, 22, 5709, 164, 514, "Input",ExpressionUUID->"c0141252-4a04-44d0-8d08-2fb207fcd8a9"],
+Cell[6292, 188, 26058, 542, 395, "Output",ExpressionUUID->"1ca4b510-4fda-4e76-8312-24f76cff5520"],
+Cell[32353, 732, 327, 4, 34, "Output",ExpressionUUID->"83f4e2a1-84d2-484b-9006-0e6c55aaaa8e"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[32682, 747, 7380, 198, 514, "Input",ExpressionUUID->"813d812e-794c-4f82-84b2-a684dbd709e6"],
-Cell[40065, 947, 24899, 525, 402, "Output",ExpressionUUID->"c4f5ffee-39da-4692-906d-97b1903029f3"],
-Cell[64967, 1474, 287, 5, 34, "Output",ExpressionUUID->"7d8b4631-df42-4e68-9aca-6455a0358ea1"],
-Cell[65257, 1481, 21255, 463, 395, "Output",ExpressionUUID->"42491b0d-9091-4520-afb3-d16dae5c19c1"],
-Cell[86515, 1946, 289, 5, 34, "Output",ExpressionUUID->"ca576b61-f0a6-4160-b01e-ab783774f74d"]
+Cell[32717, 741, 7402, 198, 514, "Input",ExpressionUUID->"813d812e-794c-4f82-84b2-a684dbd709e6"],
+Cell[40122, 941, 24939, 524, 402, "Output",ExpressionUUID->"662c01fa-34bf-479c-9fee-038f01966d20"],
+Cell[65064, 1467, 327, 4, 34, "Output",ExpressionUUID->"542051ec-6d6d-4d8b-83b7-ee7b2159c4ce"],
+Cell[65394, 1473, 21295, 462, 395, "Output",ExpressionUUID->"91fdf3ff-2886-4124-ac35-973dcc26dfc7"],
+Cell[86692, 1937, 327, 4, 34, "Output",ExpressionUUID->"fbd5ffec-1317-4994-ae05-0f79dbb1ca14"]
 }, Open  ]]
 }
 ]
