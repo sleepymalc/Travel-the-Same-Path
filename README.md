@@ -6,7 +6,7 @@ The paper can be found in [here](https://github.com/sleepymalc/Travel-the-Same-P
 
 ### Install Anaconda
 
-We use `anaconda` to manage our environment. For people using Greatlakes, see the following. 
+We use `anaconda` to manage our environment. For people using Greatlakes, see the following :-
 
 Since we can't use `sudo`, hence we build `anaconda` from source. Download [`Anaconda3-2021.11-Linux-x86_64.sh`](https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh) and upload it to your Greatlakes server using either [gui for greatlakes](https://greatlakes.arc-ts.umich.edu/pun/sys/dashboard) or [globus](https://www.globus.org/). After doing so, just run 
 
@@ -150,7 +150,7 @@ To evaluate our model performance, we use the following command.
 python 05_evaluate.py -n <tsp_size> -g <GPU id> -l <imitation size>
 ```
 
-where `-n`, `-g` are the same flag as we saw, and `-l` is to specify which model we want to evaluate. For example, if one wants to evaluate the model which is only trained by imitation learning on `<im_tsp_size>`, then the argument of `-l` should be `<im_tsp_size>` namely the size of tsp instances the model you want to load is trained on. 
+where `-n`, `-g` are the same flag as we saw, and `-l` is to specify which model we want to evaluate. For example, if we want to evaluate the model which is only trained by imitation learning on `<im_tsp_size>`, then the argument of `-l` should be `<im_tsp_size>` namely the size of tsp instances the model you want to load is trained on. 
 
 ## Note
 
